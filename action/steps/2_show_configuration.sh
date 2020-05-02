@@ -9,16 +9,16 @@ echo "App identifier: $appId"
 echo "Build description: $buildDescription"
 echo ""
 
-if [ -z "$releaseBranch" ]; then
+if [ -n "$releaseBranch" ]; then
   echo "Releasing to $releaseBranch"
   echo ""
 fi
 
 echo "Looking for files in:"
-i=0;
+i=1;
 until [ $i -gt 9 ]; do
   eval "currentDepotPath=\$depot${i}Path"
-  if [ -z "$currentDepotPath" ]; then
+  if [ -n "$currentDepotPath" ]; then
     echo "$rootPath/$currentDepotPath"
   fi;
 

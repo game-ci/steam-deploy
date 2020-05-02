@@ -10,14 +10,14 @@ mkdir BuildOutput
 mkdir ContentRoot
 
 export DEPOTS="\n"
-i=0;
+i=1;
 until [ $i -gt 9 ]; do
   eval "currentDepotPath=\$depot${i}Path"
-  if [ -z "${currentDepotPath}" ]; then
+  if [ -n "${currentDepotPath}" ]; then
     currentDepot=$((appId+i))
-    echo "adding depot$currentDepot.vdf"
-    export DEPOTS="$DEPOTS		\"$currentDepot\" \"depot$currentDepot.vdf\"\n"
-    cat << EOF > "depot$currentDepot.vdf"
+    echo "adding depot${currentDepot}.vdf"
+    export DEPOTS="$DEPOTS		\"$currentDepot\" \"depot${currentDepot}.vdf\"\n"
+    cat << EOF > "depot${currentDepot}.vdf"
 "DepotBuildConfig"
 {
 	"DepotID" "$currentDepot"
@@ -32,6 +32,8 @@ until [ $i -gt 9 ]; do
 }
 EOF
   fi;
+
+  cat depot${currentDepot}.vdf
 
   i=$((i+1))
 done
