@@ -14,8 +14,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          username: SomeUsername
-          password: SomePassword
+          username: ${{ secrets.STEAM_USERNAME }}
+          password: ${{ secrets.STEAM_PASSWORD }}
           appId: 1234560
           buildDescription: v0.0.1
           rootPath: builds
