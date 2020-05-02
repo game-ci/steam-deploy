@@ -22,5 +22,5 @@ until [ $i -gt 9 ]; do
     echo "$rootPath/$currentDepotPath"
   fi;
 
-  ((i=i+1))
+  i=$((i+1))
 done
