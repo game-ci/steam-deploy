@@ -18,7 +18,8 @@ cat << EOF > "manifest.vdf"
   "local" "$localContentServer"
 
   "depots"
-  {$DEPOTS}
+  {$(echo "$DEPOTS" | sed 's/\\n/\
+/g')}
 }
 EOF
 
