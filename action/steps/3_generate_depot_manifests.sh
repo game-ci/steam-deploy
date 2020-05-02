@@ -13,7 +13,6 @@ i=1;
 export DEPOTS="\n"
 until [ $i -gt 9 ]; do
   eval "currentDepotPath=\$depot${i}Path"
-  echo "current: $currentDepotPath"
   if [ -n "$currentDepotPath" ]; then
     currentDepot=$((appId+i))
     echo ""
@@ -34,10 +33,10 @@ until [ $i -gt 9 ]; do
   "FileExclusion" "*.pdb"
 }
 EOF
-  fi;
 
   cat depot${currentDepot}.vdf
   echo ""
+  fi;
 
   i=$((i+1))
 done
