@@ -9,15 +9,15 @@ echo ""
 cat << EOF > "manifest.vdf"
 "appbuild"
 {
-	"appid"	"$appId"
-	"desc" "$buildDescription"
-	"buildoutput" "BuildOutput"
-	"contentroot" "ContentRoot"
-	"setlive"	"$releaseBranch"
-	"preview" "$previewEnabled"
-	"local"	"$localContentServer"
+  "appid" "$appId"
+  "desc" "$buildDescription"
+  "buildoutput" "BuildOutput"
+  "contentroot" "ContentRoot"
+  "setlive" "$releaseBranch"
+  "preview" "$previewEnabled"
+  "local" "$localContentServer"
 
-	"depots"
-	{$DEPOTS}
+  "depots"
+  {$DEPOTS}
 }
 EOF
