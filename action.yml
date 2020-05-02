@@ -1,0 +1,19 @@
+name: 'Steam - Deploy'
+author: Webber Takken <webber@takken.io>
+description: 'Deploy game builds to Steam using the SteamSDK.'
+inputs:
+  steamUsername:
+    required: true
+    default: ''
+    description: 'The username of your builder account.'
+  steamPassword:
+    required: true
+    default: ''
+    description: 'The password of your builder account.'
+outputs: {}
+branding:
+  icon: 'package'
+  color: 'gray-dark'
+runs:
+  using: 'docker'
+  image: 'action/Dockerfile'
