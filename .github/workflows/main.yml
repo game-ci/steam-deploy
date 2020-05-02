@@ -1,0 +1,25 @@
+name: 🚀
+
+on:
+  pull_request: {}
+  push: { branches: [master] }
+
+jobs:
+  deploy:
+    name: Deploy to Steam ☁
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          username: SomeUsername
+          password: SomePassword
+          appId: 1234560
+          buildDescription: v0.0.1
+          rootPath: builds
+          depot1Path: StandaloneWindows64
+          depot2Path: StandaloneLinux64
+          releaseBranch: ~
+          localContentServer: ''
