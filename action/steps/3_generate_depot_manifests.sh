@@ -14,7 +14,7 @@ i=0;
 until [ $i -gt 9 ]; do
   eval "currentDepotPath=\$depot${i}Path"
   if [ -z "${currentDepotPath}" ]; then
-    ((currentDepot=appId+i))
+    currentDepot=$((appId+i))
     echo "adding depot$currentDepot.vdf"
     export DEPOTS="$DEPOTS		\"$currentDepot\" \"depot$currentDepot.vdf\"\n"
     cat << EOF > "depot$currentDepot.vdf"
@@ -33,5 +33,5 @@ until [ $i -gt 9 ]; do
 EOF
   fi;
 
-  ((i=i+1))
+  i=$((i+1))
 done
