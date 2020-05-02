@@ -13,19 +13,21 @@ i=1;
 export DEPOTS="\n"
 until [ $i -gt 9 ]; do
   eval "currentDepotPath=\$depot${i}Path"
+  echo "current: $currentDepotPath"
   if [ -n "$currentDepotPath" ]; then
     currentDepot=$((appId+i))
-    echo "Adding depot${currentDepot}.vdf"
+    echo ""
+    echo "Adding depot${currentDepot}.vdf ..."
     echo ""
     export DEPOTS="$DEPOTS  \"$currentDepot\" \"depot${currentDepot}.vdf\"\n"
     cat << EOF > "depot${currentDepot}.vdf"
 "DepotBuildConfig"
 {
   "DepotID" "$currentDepot"
-  "ContentRoot" "$(pwd)"
+  "ContentRoot" "$(pwd)/$rootPath"
   "FileMapping"
   {
-    "LocalPath" "$rootPath/$currentDepotPath"
+    "LocalPath" "$currentDepotPath"
     "DepotPath" "."
     "recursive" "1"
   }
