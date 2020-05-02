@@ -21,3 +21,6 @@ cat << EOF > "manifest.vdf"
   {$DEPOTS}
 }
 EOF
+
+cat manifest.vdf
+echo ""
