@@ -11,11 +11,10 @@ echo "#################################"
 echo ""
 "$STEAMCMDDIR/steamcmd.sh" \
   +login "$INPUT_USERNAME" "$INPUT_PASSWORD" \
-  +run_app_build_http \
+  +run_app_build_http manifest.vdf \
   +api_logging verbose \
   +log_ipc verbose \
   +quit || (
-    echo ""
     echo "#################################"
     echo "#        Current status         #"
     echo "#################################"
@@ -24,7 +23,7 @@ echo ""
     "$STEAMCMDDIR/steamcmd.sh +app_status $appId"
     echo ""
     echo "Show the current Steamworks configuration for this game (depots, launch options, etc.). $appId"
-    "$STEAMCMDDIR/steamcmd.sh +app_info_print $appId"
+    "$STEAMCMDDIR/steamcmd.sh +app_info_print manifest.vdf"
     echo ""
     echo "Show the current user configuration for this game (current language, install directory, etc.)"
     "$STEAMCMDDIR/steamcmd.sh +app_config_print $appId"
@@ -33,7 +32,11 @@ echo ""
     echo "#             Errors            #"
     echo "#################################"
     echo ""
-    echo "home = $HOME"
+    echo "Listing current folder and rootpath"
+    echo ""
+    ls -alh
+    echo ""
+    ls -alh $rootPath
     echo ""
     echo "Listing logs folder:"
     echo ""
