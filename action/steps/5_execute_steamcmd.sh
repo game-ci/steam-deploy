@@ -17,6 +17,11 @@ ls -alh "$STEAMCMDDIR/linux32"
   +api_logging verbose \
   +log_ipc verbose \
   +quit || (
+    echo "Listing steamcmd directory again (to check for updated files)"
+    echo ""
+    ls -alh "$STEAMCMDDIR"
+    ls -alh "$STEAMCMDDIR/linux32"
+    echo ""
     echo "#################################"
     echo "#        Current status         #"
     echo "#################################"
@@ -24,17 +29,7 @@ ls -alh "$STEAMCMDDIR/linux32"
     echo "Show the current state of the app on this client."
     echo ""
     sleep 1.0e-2
-    "$STEAMCMDDIR/steamcmd.sh" +app_status "$appId"
-    echo ""
-    echo "Show the current Steamworks configuration for this game (depots, launch options, etc.)."
-    echo ""
-    sleep 1.0e-2
-    "$STEAMCMDDIR/steamcmd.sh" +app_info_print "$appId"
-    echo ""
-    echo "Show the current user configuration for this game (current language, install directory, etc.)"
-    echo ""
-    sleep 1.0e-2
-    "$STEAMCMDDIR/steamcmd.sh" +app_config_print "$appId"
+    "$STEAMCMDDIR/steamcmd.sh" +quit +app_status "$appId"
     echo ""
     echo "#################################"
     echo "#             Errors            #"
