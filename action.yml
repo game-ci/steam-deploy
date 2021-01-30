@@ -10,6 +10,10 @@ inputs:
     required: true
     default: ''
     description: 'The password of your builder account.'
+  steamMfa:
+    required: false
+    default: ''
+    description: 'The 5 character MFA code emailed when logging in.'
 outputs: {}
 branding:
   icon: 'package'
