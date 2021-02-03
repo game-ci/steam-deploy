@@ -6,9 +6,6 @@ echo "#   Generating Depot Manifests  #"
 echo "#################################"
 echo ""
 
-mkdir BuildOutput
-mkdir ContentRoot
-
 i=1;
 export DEPOTS="\n  "
 until [ $i -gt 9 ]; do
