@@ -11,7 +11,7 @@ echo "#################################"
 echo ""
 "$STEAMCMDDIR/steamcmd.sh" \
   +login "$INPUT_USERNAME" "$INPUT_PASSWORD" "$INPUT_MFA" \
-  +run_app_build_http ./manifest.vdf \
+  +run_app_build_http $(pwd)/manifest.vdf \
   +api_logging verbose \
   +log_ipc verbose \
   +quit || (
