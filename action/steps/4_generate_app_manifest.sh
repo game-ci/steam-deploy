@@ -6,13 +6,15 @@ echo "#    Generating App Manifest    #"
 echo "#################################"
 echo ""
 
+mkdir BuildOutput
+
 cat << EOF > "manifest.vdf"
 "appbuild"
 {
   "appid" "$appId"
   "desc" "$buildDescription"
   "buildoutput" "BuildOutput"
-  "contentroot" "ContentRoot"
+  "contentroot" "$(pwd)"
   "setlive" "$releaseBranch"
   "preview" "$previewEnabled"
   "local" "$localContentServer"

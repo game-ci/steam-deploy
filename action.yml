@@ -2,14 +2,25 @@ name: 'Steam - Deploy'
 author: Webber Takken <webber@takken.io>
 description: 'Deploy game builds to Steam using the SteamSDK.'
 inputs:
-  steamUsername:
+  appId:
+    required: true
+    default: ''
+    description: 'The app id within steam partner network.'
+  buildDescription:
+    required: false
+    description: 'Description for this build.'
+  username:
     required: true
     default: ''
     description: 'The username of your builder account.'
-  steamPassword:
+  password:
     required: true
     default: ''
     description: 'The password of your builder account.'
+  mfaCode:
+    required: false
+    default: ''
+    description: 'The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.'
 outputs: {}
 branding:
   icon: 'package'
