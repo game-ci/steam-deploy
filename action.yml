@@ -5,10 +5,10 @@ inputs:
   appId:
     required: true
     default: ''
-    description: 'The app id of your steam application.'
+    description: 'The app id within steam partner network.'
   buildDescription:
     required: false
-    description: 'The description of your build.'
+    description: 'Description for this build.'
   username:
     required: true
     default: ''
@@ -17,10 +17,10 @@ inputs:
     required: true
     default: ''
     description: 'The password of your builder account.'
-  steamMfa:
+  mfaCode:
     required: false
     default: ''
-    description: 'The 5 character MFA code emailed when logging in.'
+    description: 'The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.'
 outputs: {}
 branding:
   icon: 'package'

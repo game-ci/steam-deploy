@@ -40,7 +40,7 @@ jobs:
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
-		  mfa: ${{ secrets.STEAM_MFA }}
+          mfaCode:  ${{ secrets.STEAM_MFA_CODE }}
           appId: 1234560
           buildDescription: v0.0.1
           rootPath: builds
@@ -60,9 +60,9 @@ The username of the Steam Builder Account that you created in setup step 1.
 
 The password of the Steam Builder Account that you created in setup step 1.
 
-#### mfa
+#### mfaCode
 
-The MFA confirmation code used when logging into steam.
+The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.
 
 #### appId
 
