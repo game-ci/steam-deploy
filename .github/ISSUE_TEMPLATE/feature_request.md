@@ -1,20 +1,23 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an improvement, or a new feature
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Context**
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+<!--Please describe a proper context-->
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Suggested solution**
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+<!--Tell us what you would suggest-->
+
+**Considered alternatives**
+
+<!--Please add any alternative solutions that you have considered-->
+
+**Additional details**
+
+<!--Please add context, links, reasons, screenshots, etc.-->
