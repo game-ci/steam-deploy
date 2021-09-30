@@ -64,6 +64,11 @@ The password of the Steam Builder Account that you created in setup step 1.
 
 The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.
 
+There is a [3 step process](https://github.com/game-ci/steam-deploy/issues/4#issuecomment-751325644) required to get MFA to work, which is a bit involved.
+1. Build 1... Run a build which attempts to use steam-upload... it will fail, but will send you a steam guard email.
+2. Build 2... Set up artifacts to download steam ID files. Enter steam guard email MFA using mfaCode. 
+3. Build 3 onwards... Ensure you restore steam ID files every build. MFA is then no longer required.
+
 #### appId
 
 The identifier of your app on steam. You can find it on your [dashboard](https://partner.steamgames.com/dashboard).
