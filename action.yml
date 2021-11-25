@@ -2,13 +2,6 @@ name: 'Steam - Deploy'
 author: Webber Takken <webber@takken.io>
 description: 'Deploy game builds to Steam using the SteamSDK.'
 inputs:
-  appId:
-    required: true
-    default: ''
-    description: 'The app id within steam partner network.'
-  buildDescription:
-    required: false
-    description: 'Description for this build.'
   username:
     required: true
     default: ''
@@ -21,6 +14,61 @@ inputs:
     required: false
     default: ''
     description: 'The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.'
+  configVdf:
+    required: false
+    default: ''
+    description: 'The contents of the file at /home/runner/Steam/config/config.vdf'
+  ssfnFileName:
+    required: false
+    default: ''
+    description: 'ls /home/runner/Steam/ssfn*'
+  ssfnFileContents:
+    required: false
+    default: ''
+    description: 'The contents of the file at <ssfnFileName>'
+  appId:
+    required: true
+    default: ''
+    description: 'The app id within steam partner network.'
+  buildDescription:
+    required: false
+    description: 'Description for this build.'
+  rootPath:
+    required: false
+    description: 'The root path to your builds. This is the base of which depots will search your files.'
+  depot1Path:
+    required: false
+    description: 'The path to depot1.'
+  depot2Path:
+    required: false
+    description: 'The path to depot2.'
+  depot3Path:
+    required: false
+    description: 'The path to depot3.'
+  depot4Path:
+    required: false
+    description: 'The path to depot4.'
+  depot5Path:
+    required: false
+    description: 'The path to depot5.'
+  depot6Path:
+    required: false
+    description: 'The path to depot6.'
+  depot7Path:
+    required: false
+    description: 'The path to depot7.'
+  depot8Path:
+    required: false
+    description: 'The path to depot8.'
+  depot9Path:
+    required: false
+    description: 'The path to depot9.'
+  releaseBranch:
+    required: false
+    description: 'The branch within steam that this build will be automatically put live on.'
+  localContentServer:
+    required: false
+    description: 'The path to your local content server.'
 outputs: {}
 branding:
   icon: 'package'

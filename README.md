@@ -17,7 +17,7 @@ https://partner.steamgames.com/doc/sdk/uploading#Build_Account
 
 In order to upload a build, this action is assuming that you have created that build in a previous `step` or `job`.
 
-For an example of how to do this in unity, see [Unity Actions](https://github.com/webbertakken/unity-actions).
+For an example of how to do this in unity, see [Unity Actions](https://github.com/game-ci/unity-actions).
 
 The exported artifact will be used in the next step.
 
@@ -36,11 +36,13 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
-      - uses: webbertakken/steam-deploy@<version>
+      - uses: game-ci/steam-deploy@<version>
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
-          mfaCode:  ${{ secrets.STEAM_MFA_CODE }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+          ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
+          ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: 1234560
           buildDescription: v0.0.1
           rootPath: builds
@@ -60,14 +62,14 @@ The username of the Steam Builder Account that you created in setup step 1.
 
 The password of the Steam Builder Account that you created in setup step 1.
 
-#### mfaCode
+#### mfaCode, configVdf, ssfnFileName, and ssfnFileContents
 
-The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.
+The multi-factor authentication from steam guard.
 
 There is a [3 step process](https://github.com/game-ci/steam-deploy/issues/4#issuecomment-751325644) required to get MFA to work, which is a bit involved.
-1. Build 1... Run a build which attempts to use steam-upload... it will fail, but will send you a steam guard email.
-2. Build 2... Set up artifacts to download steam ID files. Enter steam guard email MFA using mfaCode. 
-3. Build 3 onwards... Ensure you restore steam ID files every build. MFA is then no longer required.
+1. Build 1... Run a build which attempts to use steam-deploy... it will fail, but will send you a steam guard email.
+2. Build 2... Use mfaCode to enter the code sent in the steam guard email... then after successful authentication, store secrets for configVdf, ssfnFileName, and ssfnFileContents.
+3. Build 3 onwards... Remove mfaCode, and instead use configVdf, ssfnFileName, and ssfnFileContents to bypass steam guard. 
 
 #### appId
 

@@ -5,8 +5,8 @@ LABEL "com.github.actions.description"="Deploy game builds to Steam using the St
 LABEL "com.github.actions.icon"="package"
 LABEL "com.github.actions.color"="gray-dark"
 
-LABEL "repository"="https://github.com/webbertakken/steam-deploy"
-LABEL "homepage"="https://github.com/webbertakken/steam-deploy"
+LABEL "repository"="https://github.com/game-ci/steam-deploy"
+LABEL "homepage"="https://github.com/game-ci/steam-deploy"
 LABEL "maintainer"="Webber Takken <webber@takken.io>"
 
 ADD steps /steps
