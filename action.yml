@@ -10,12 +10,8 @@ inputs:
     required: true
     default: ''
     description: 'The password of your builder account.'
-  mfaCode:
-    required: false
-    default: ''
-    description: 'The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.'
   configVdf:
-    required: false
+    required: true
     default: ''
     description: 'The contents of the file at /home/runner/Steam/config/config.vdf'
   ssfnFileName:
@@ -27,7 +23,7 @@ inputs:
     default: ''
     description: 'The contents of the file at ssfnFileName.'
   appId:
-    required: true
+    required: false
     default: ''
     description: 'The app id within steam partner network.'
   buildDescription:
