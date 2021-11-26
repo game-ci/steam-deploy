@@ -38,6 +38,7 @@ jobs:
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
+		  mfaCode: ${{ secrets.STEAM_MFA_CODE }}
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
           ssfnFilePath: ${{ secrets.STEAM_SSFN_FILE_PATH }}
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
@@ -59,7 +60,7 @@ The username of the Steam Builder Account that you created in setup step 1.
 
 The password of the Steam Builder Account that you created in setup step 1.
 
-#### configVdf, ssfnFilePath, and ssfnFileContents
+#### mfaCode, configVdf, ssfnFilePath, and ssfnFileContents
 
 Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard. 
 This means that simply using username and password isn't enough to authenticate with Steam. 
@@ -75,9 +76,8 @@ Note that the workflow will fail at this time, but it should also cause an email
 You could instead edit the "Setup Steam Secrets" workflow to use an existing PAT if you already have one.
 1. Re-run the "Setup Steam Secrets" workflow, which should now successfully run and create Secrets for `STEAM_CONFIG_VDF`, `STEAM_SSFN_FILE_PATH` and `STEAM_SSFN_FILE_CONTENTS`.
 1. **IMPORTANT:** [Delete the logs](https://github.blog/changelog/2020-04-21-github-actions-logs-can-now-be-deleted/) for the succesful run, as the values of the secrets could potentially be stolen from the logs if they are not deleted. 
-You could also delete the `STEAM_MFA_CODE` Secret at this time, though there are no serious security implications for keeping `STEAM_MFA_CODE` as a Secret.
 
-Once the Secrets for `STEAM_CONFIG_VDF`, `STEAM_SSFN_FILE_PATH` and `STEAM_SSFN_FILE_CONTENTS` have been successfully created, the steam-deploy action can take them as inputs to be used with Steam Guard, as shown in the example above.
+Once the Secrets for `STEAM_MFA_CODE`, `STEAM_CONFIG_VDF`, `STEAM_SSFN_FILE_PATH` and `STEAM_SSFN_FILE_CONTENTS` have been successfully created, the steam-deploy action can take them as inputs to be used with Steam Guard, as shown in the example above.
 
 #### appId
 

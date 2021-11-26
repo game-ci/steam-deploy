@@ -10,6 +10,10 @@ inputs:
     required: true
     default: ''
     description: 'The password of your builder account.'
+  mfaCode:
+    required: true
+    default: ''
+    description: 'The MFA code emailed to your account.'
   configVdf:
     required: true
     default: ''
