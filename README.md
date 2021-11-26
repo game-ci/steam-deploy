@@ -1,5 +1,5 @@
 # Steam deploy
-Github Action to deploy a game to steam
+Github Action to deploy a game to Steam
 
 ## Setup
 
@@ -17,7 +17,7 @@ https://partner.steamgames.com/doc/sdk/uploading#Build_Account
 
 In order to upload a build, this action is assuming that you have created that build in a previous `step` or `job`.
 
-For an example of how to do this in unity, see [Unity Actions](https://github.com/game-ci/unity-actions).
+For an example of how to do this in Unity, see [Unity Actions](https://github.com/game-ci/unity-actions).
 
 The exported artifact will be used in the next step.
 
@@ -45,11 +45,10 @@ jobs:
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: 1234560
           buildDescription: v0.0.1
-          rootPath: builds
+          rootPath: build
           depot1Path: StandaloneWindows64
           depot2Path: StandaloneLinux64
-          releaseBranch: PreRelease
-          localContentServer: LocalContentServer
+          releaseBranch: prerelease
 ```
 
 ## Configuration
@@ -62,7 +61,7 @@ The username of the Steam Builder Account that you created in setup step 1.
 
 The password of the Steam Builder Account that you created in setup step 1.
 
-#### mfaCode, configVdf, ssfnFileName, and ssfnFileContents
+#### configVdf, ssfnFileName, and ssfnFileContents
 
 The multi-factor authentication from steam guard.
 
@@ -100,7 +99,3 @@ _(feel free to contribute if you have a more complex use case!)_
 The branch within steam that this build will be automatically put live on.
 
 It is recommended to **not use** branch `default` for this as it is potentially dangerous.
-
-#### localContentServer
-
-The path to your local content server.

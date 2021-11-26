@@ -16,8 +16,6 @@ cat << EOF > "manifest.vdf"
   "buildoutput" "BuildOutput"
   "contentroot" "$(pwd)"
   "setlive" "$releaseBranch"
-  "preview" "$previewEnabled"
-  "local" "$localContentServer"
 
   "depots"
   {$(echo "$DEPOTS" | sed 's/\\n/\

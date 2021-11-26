@@ -23,7 +23,7 @@ inputs:
     default: ''
     description: 'The contents of the file at ssfnFileName.'
   appId:
-    required: false
+    required: true
     default: ''
     description: 'The app id within steam partner network.'
   buildDescription:
@@ -62,9 +62,6 @@ inputs:
   releaseBranch:
     required: false
     description: 'The branch within steam that this build will be automatically put live on.'
-  localContentServer:
-    required: false
-    description: 'The path to your local content server.'
 outputs: {}
 branding:
   icon: 'package'

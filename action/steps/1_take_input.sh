@@ -4,8 +4,6 @@ export appId=$INPUT_APPID
 export buildDescription=$INPUT_BUILDDESCRIPTION
 export rootPath=$INPUT_ROOTPATH
 export releaseBranch=$INPUT_RELEASEBRANCH
-export localContentServer=$INPUT_LOCALCONTENTSERVER
-export previewEnabled=$INPUT_PREVIEWENABLED
 
 i=1;
 until [ $i -gt 9 ]; do
