@@ -6,10 +6,10 @@ echo "#    Copying SteamGuard Files    #"
 echo "#################################"
 echo ""
 
-if [ -n "$INPUT_STEAMCONFIGVDF" && -n "$INPUT_STEAMSSFNFILENAME" && -n "$INPUT_STEAMSSFNFILECONTENTS" ]; then
+if [ -n "$INPUT_CONFIGVDF" && -n "$INPUT_SSFNFILENAME" && -n "$INPUT_SSFNFILECONTENTS" ]; then
   mkdir -p /home/runner/Steam/config
-  echo "$INPUT_STEAMCONFIGVDF" | base64 -d - > /home/runner/Steam/config/config.vdf
-  echo "$INPUT_STEAMSSFNFILECONTENTS" | base64 -d - > "/home/runner/Steam/$INPUT_STEAMSSFNFILENAME"
+  echo "$INPUT_CONFIGVDF" | base64 -d - > /home/runner/Steam/config/config.vdf
+  echo "$INPUT_SSFNFILECONTENTS" | base64 -d - > "/home/runner/Steam/$INPUT_SSFNFILENAME"
   echo "Copied SteamGuard Files!"
   echo ""
 else
