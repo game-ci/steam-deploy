@@ -32,16 +32,14 @@ jobs:
   deploy:
     name: Deploy to Steam ☁
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     steps:
       - uses: actions/checkout@v2
-      - uses: game-ci/steam-deploy@<version>
+      - uses: game-ci/steam-deploy@v1
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
-          ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
+          ssfnFilePath: ${{ secrets.STEAM_SSFN_FILE_PATH }}
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: 1234560
           buildDescription: v0.0.1
@@ -61,7 +59,16 @@ The username of the Steam Builder Account that you created in setup step 1.
 
 The password of the Steam Builder Account that you created in setup step 1.
 
-#### configVdf, ssfnFileName, and ssfnFileContents
+#### configVdf, ssfnFilePath, and ssfnFileContents
+
+steam.yml
+STEAM_USERNAME
+STEAM_PASSWORD
+${{secrets.STEAM_MFA_CODE }}
+${{ secrets.PERSONAL_ACCESS_TOKEN }}
+STEAM_CONFIG_VDF
+STEAM_SSFN_FILE_PATH
+STEAM_SSFN_FILE_CONTENTS
 
 The multi-factor authentication from steam guard.
 

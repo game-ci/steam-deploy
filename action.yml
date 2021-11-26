@@ -14,7 +14,7 @@ inputs:
     required: true
     default: ''
     description: 'The contents of the file at /home/runner/Steam/config/config.vdf'
-  ssfnFileName:
+  ssfnFilePath:
     required: true
     default: ''
     description: 'ls /home/runner/Steam/ssfn*'

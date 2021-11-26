@@ -1,0 +1,38 @@
+name: Setup Steam Secrets
+
+on: workflow_dispatch
+
+jobs:
+  steam:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: CyberAndrii/setup-steamcmd@v1.1.1
+      - run: steamcmd +login ${{ secrets.STEAM_USERNAME }} ${{ secrets.STEAM_PASSWORD }} ${{secrets.STEAM_MFA_CODE }} +quit
+      - id: secreting
+        run: |
+          echo "Exporting STEAM_CONFIG_VDF..."
+          export STEAM_CONFIG_VDF="$(cat /home/runner/Steam/config/config.vdf | base64)"
+          echo "::set-output name=STEAM_CONFIG_VDF::$STEAM_CONFIG_VDF"
+          echo "Exporting STEAM_SSFN_FILE_PATH..."
+          export STEAM_SSFN_FILE_PATH="$(ls /home/runner/Steam/ssfn*)"
+          echo "::set-output name=STEAM_SSFN_FILE_PATH::$STEAM_SSFN_FILE_PATH"
+          echo "Exporting STEAM_SSFN_FILE_CONTENTS..."
+          export STEAM_SSFN_FILE_CONTENTS="$(cat $STEAM_SSFN_FILE_PATH | base64)"
+          echo "::set-output name=STEAM_SSFN_FILE_CONTENTS::$STEAM_SSFN_FILE_CONTENTS"
+          echo "Exported secrets!"
+      - uses: gliech/create-github-secret-action@v1
+        with:
+          name: STEAM_CONFIG_VDF
+          value: ${{ steps.secreting.outputs.STEAM_CONFIG_VDF }}
+          pa_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - uses: gliech/create-github-secret-action@v1
+        with:
+          name: STEAM_SSFN_FILE_PATH
+          value: ${{ steps.secreting.outputs.STEAM_SSFN_FILE_PATH }}
+          pa_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - uses: gliech/create-github-secret-action@v1
+        with:
+          name: STEAM_SSFN_FILE_CONTENTS
+          value: ${{ steps.secreting.outputs.STEAM_SSFN_FILE_CONTENTS }}
+          pa_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

@@ -1,25 +1,26 @@
 name: 🚀
 
 on:
+  push: { branches: [main] }
   pull_request: {}
-  push: { branches: [master] }
+  workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy to Steam ☁
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     steps:
       - uses: actions/checkout@v2
       - uses: ./
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+          ssfnFilePath: ${{ secrets.STEAM_SSFN_FILE_PATH }}
+          ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: 1234560
           buildDescription: v0.0.1
-          rootPath: builds
+          rootPath: build
           depot1Path: StandaloneWindows64
           depot2Path: StandaloneLinux64
-          releaseBranch: PreRelease
-          localContentServer: LocalContentServer
+          releaseBranch: prerelease
