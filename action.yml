@@ -21,7 +21,7 @@ inputs:
   ssfnFileContents:
     required: true
     default: ''
-    description: 'The contents of the file at ssfnFileName.'
+    description: 'The contents of the file at ssfnFilePath.'
   appId:
     required: true
     default: ''

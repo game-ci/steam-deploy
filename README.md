@@ -61,21 +61,23 @@ The password of the Steam Builder Account that you created in setup step 1.
 
 #### configVdf, ssfnFilePath, and ssfnFileContents
 
-steam.yml
-STEAM_USERNAME
-STEAM_PASSWORD
-${{secrets.STEAM_MFA_CODE }}
-${{ secrets.PERSONAL_ACCESS_TOKEN }}
-STEAM_CONFIG_VDF
-STEAM_SSFN_FILE_PATH
-STEAM_SSFN_FILE_CONTENTS
+Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard. 
+This means that simply using username and password isn't enough to authenticate with Steam. 
+Fortunately, GitHub runners share the same machine ID, so it is possible to go through the MFA process only once by using secrets for configVdf, ssfnFilePath, and ssfnFileContents.
 
-The multi-factor authentication from steam guard.
+To go through the MFA process and get the values for configVdf, ssfnFilePath, and ssfnFileContents, we recommend following these steps:
+1. Copy [this setup_steam_secrets.yml workflow](.github/workflows/setup_steam_secrets.yml) to your repo's workflows.
+1. Create [GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) for `STEAM_USERNAME` and `STEAM_PASSWORD`.
+1. [Manually run](https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow) the "Setup Steam Secrets" workflow. 
+Note that the workflow will fail at this time, but it should also cause an email to be sent with a code for the MFA process.
+1. Create a Secret called `STEAM_MFA_CODE` with the value from the email from the previous step. 
+1. Create a [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with full `repo` access and save it as a Secret called `PERSONAL_ACCESS_TOKEN`. 
+You could instead edit the "Setup Steam Secrets" workflow to use an existing PAT if you already have one.
+1. Re-run the "Setup Steam Secrets" workflow, which should now successfully run and create Secrets for `STEAM_CONFIG_VDF`, `STEAM_SSFN_FILE_PATH` and `STEAM_SSFN_FILE_CONTENTS`.
+1. **IMPORTANT:** [Delete the logs](https://github.blog/changelog/2020-04-21-github-actions-logs-can-now-be-deleted/) for the succesful run, as the values of the secrets could potentially be stolen from the logs if they are not deleted. 
+You could also delete the `STEAM_MFA_CODE` Secret at this time, though there are no serious security implications for keeping `STEAM_MFA_CODE` as a Secret.
 
-There is a [3 step process](https://github.com/game-ci/steam-deploy/issues/4#issuecomment-751325644) required to get MFA to work, which is a bit involved.
-1. Build 1... Run a build which attempts to use steam-deploy... it will fail, but will send you a steam guard email.
-2. Build 2... Use mfaCode to enter the code sent in the steam guard email... then after successful authentication, store secrets for configVdf, ssfnFileName, and ssfnFileContents.
-3. Build 3 onwards... Remove mfaCode, and instead use configVdf, ssfnFileName, and ssfnFileContents to bypass steam guard. 
+Once the Secrets for `STEAM_CONFIG_VDF`, `STEAM_SSFN_FILE_PATH` and `STEAM_SSFN_FILE_CONTENTS` have been successfully created, the steam-deploy action can take them as inputs to be used with Steam Guard, as shown in the example above.
 
 #### appId
 
