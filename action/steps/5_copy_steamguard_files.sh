@@ -13,12 +13,5 @@ echo "$INPUT_SSFNFILECONTENTS" | base64 -d - > "/github/home/Steam/$INPUT_SSFNFI
 chmod 777 /github/home/Steam/config/config.vdf
 chmod 777 "/github/home/Steam/$INPUT_SSFNFILENAME"
 
-cat /github/home/Steam/config/config.vdf
-echo ""
-ls -al /github/home/Steam
-echo ""
-cat "/github/home/Steam/$INPUT_SSFNFILENAME"
-echo ""
-
 echo "Copied SteamGuard Files!"
 echo ""

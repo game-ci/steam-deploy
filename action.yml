@@ -21,7 +21,7 @@ inputs:
   ssfnFileName:
     required: true
     default: ''
-    description: 'ls STEAM_HOME/ssfn*.'
+    description: 'basename of ls STEAM_HOME/ssfn.'
   ssfnFileContents:
     required: true
     default: ''
