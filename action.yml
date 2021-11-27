@@ -10,10 +10,6 @@ inputs:
     required: true
     default: ''
     description: 'The password of your builder account.'
-  mfaCode:
-    required: true
-    default: ''
-    description: 'The MFA code emailed to your account.'
   configVdf:
     required: true
     default: ''
@@ -71,5 +67,37 @@ branding:
   icon: 'package'
   color: 'gray-dark'
 runs:
-  using: 'docker'
-  image: 'action/Dockerfile'
+  using: "composite"
+  steps:
+    - id: steamsetup
+      uses: CyberAndrii/setup-steamcmd@v1.1.1
+    - run: |
+        export STEAMCMDDIR=${{ steps.steamsetup.outputs.directory }}
+        export steamUsername=${{ inputs.steamUsername }}
+        export steamPassword=${{ inputs.steamPassword }}
+        export configVdf=${{ inputs.configVdf }}
+        export ssfnFileName=${{ inputs.ssfnFileName }}
+        export ssfnFileContents=${{ inputs.ssfnFileContents }}
+        export appId=${{ inputs.appId }}
+        export buildDescription=${{ inputs.buildDescription }}
+        export rootPath=${{ inputs.rootPath }}
+        export depot1Path=${{ inputs.depot1Path }}
+        export depot2Path=${{ inputs.depot2Path }}
+        export depot3Path=${{ inputs.depot3Path }}
+        export depot4Path=${{ inputs.depot4Path }}
+        export depot5Path=${{ inputs.depot5Path }}
+        export depot6Path=${{ inputs.depot6Path }}
+        export depot7Path=${{ inputs.depot7Path }}
+        export depot8Path=${{ inputs.depot8Path }}
+        export depot9Path=${{ inputs.depot9Path }}
+        export releaseBranch=${{ inputs.releaseBranch }}
+        chmod +X ${{ github.action_path }}/action/2_show_configuration.sh
+        chmod +X ${{ github.action_path }}/action/3_generate_depot_manifests.sh
+        chmod +X ${{ github.action_path }}/action/4_generate_app_manifest.sh
+        chmod +X ${{ github.action_path }}/action/5_copy_steamguard_files.sh
+        chmod +X ${{ github.action_path }}/action/6_execute_steamcmd.sh
+        ${{ github.action_path }}/action/2_show_configuration.sh
+        ${{ github.action_path }}/action/3_generate_depot_manifests.sh
+        ${{ github.action_path }}/action/4_generate_app_manifest.sh
+        ${{ github.action_path }}/action/5_copy_steamguard_files.sh
+        ${{ github.action_path }}/action/6_execute_steamcmd.sh

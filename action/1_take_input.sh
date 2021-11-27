@@ -1,5 +1,12 @@
 #!/bin/sh
 
+export steamUsername=$INPUT_USERNAME
+export steamPassword=$INPUT_PASSWORD
+
+export configVdf=$INPUT_CONFIGVDF
+export ssfnFileName=$INPUT_SSFNFILENAME
+export ssfnFileContents=$INPUT_SSFNFILECONTENTS
+
 export appId=$INPUT_APPID
 export buildDescription=$INPUT_BUILDDESCRIPTION
 export rootPath=$INPUT_ROOTPATH
