@@ -71,7 +71,8 @@ runs:
   steps:
     - id: steamsetup
       uses: CyberAndrii/setup-steamcmd@v1.1.1
-    - run: |
+    - shell: bash
+      run: |
         export STEAMCMDDIR=${{ steps.steamsetup.outputs.directory }}
         export steamUsername=${{ inputs.steamUsername }}
         export steamPassword=${{ inputs.steamPassword }}
