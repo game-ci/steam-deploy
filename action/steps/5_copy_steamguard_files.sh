@@ -6,18 +6,18 @@ echo "#    Copying SteamGuard Files   #"
 echo "#################################"
 echo ""
 
-mkdir -p /home/runner/Steam/config
-echo "$INPUT_CONFIGVDF" > /home/runner/Steam/config/config.vdf
-echo "$INPUT_SSFNFILECONTENTS" | base64 -d - > "$INPUT_SSFNFILEPATH"
+mkdir -p /github/home/Steam/config
+echo "$INPUT_CONFIGVDF" > /github/home/Steam/config/config.vdf
+echo "$INPUT_SSFNFILECONTENTS" | base64 -d - > "/github/home/Steam/$INPUT_SSFNFILENAME"
 
 chmod 777 /home/runner/Steam/config/config.vdf
-chmod 777 "$INPUT_SSFNFILEPATH"
+chmod 777 "/github/home/Steam/$INPUT_SSFNFILENAME"
 
-cat /home/runner/Steam/config/config.vdf
+cat /github/home/Steam/config/config.vdf
 echo ""
-ls -al /home/runner/Steam
+ls -al /github/home/Steam
 echo ""
-cat "$INPUT_SSFNFILEPATH"
+cat "/github/home/Steam/$INPUT_SSFNFILENAME"
 echo ""
 
 echo "Copied SteamGuard Files!"
