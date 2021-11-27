@@ -1,4 +1,4 @@
-FROM cm2network/steamcmd:root
+FROM cm2network/steamcmd:latest
 
 LABEL "com.github.actions.name"="Steam - Deploy"
 LABEL "com.github.actions.description"="Deploy game builds to Steam using the SteamSDK."
