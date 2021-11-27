@@ -10,7 +10,7 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 "$STEAMCMDDIR/steamcmd.sh" \
-  +login "$steamUsername" "$steamPassword" \
+  +login "$username" "$password" \
   +run_app_build_http $(pwd)/manifest.vdf \
   +api_logging verbose \
   +log_ipc verbose \

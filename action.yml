@@ -74,8 +74,8 @@ runs:
     - shell: bash
       run: |
         export STEAMCMDDIR=${{ steps.steamsetup.outputs.directory }}
-        export steamUsername=${{ inputs.steamUsername }}
-        export steamPassword=${{ inputs.steamPassword }}
+        export username=${{ inputs.username }}
+        export password=${{ inputs.password }}
         export configVdf=${{ inputs.configVdf }}
         export ssfnFileName=${{ inputs.ssfnFileName }}
         export ssfnFileContents=${{ inputs.ssfnFileContents }}
@@ -92,13 +92,18 @@ runs:
         export depot8Path=${{ inputs.depot8Path }}
         export depot9Path=${{ inputs.depot9Path }}
         export releaseBranch=${{ inputs.releaseBranch }}
-        chmod +X ${{ github.action_path }}/action/2_show_configuration.sh
-        chmod +X ${{ github.action_path }}/action/3_generate_depot_manifests.sh
-        chmod +X ${{ github.action_path }}/action/4_generate_app_manifest.sh
-        chmod +X ${{ github.action_path }}/action/5_copy_steamguard_files.sh
-        chmod +X ${{ github.action_path }}/action/6_execute_steamcmd.sh
-        ${{ github.action_path }}/action/2_show_configuration.sh
-        ${{ github.action_path }}/action/3_generate_depot_manifests.sh
-        ${{ github.action_path }}/action/4_generate_app_manifest.sh
-        ${{ github.action_path }}/action/5_copy_steamguard_files.sh
-        ${{ github.action_path }}/action/6_execute_steamcmd.sh
+        chmod +x ${{ github.action_path }}/action/2_show_configuration.sh
+        chmod +x ${{ github.action_path }}/action/3_generate_depot_manifests.sh
+        chmod +x ${{ github.action_path }}/action/4_generate_app_manifest.sh
+        chmod +x ${{ github.action_path }}/action/5_copy_steamguard_files.sh
+        chmod +x ${{ github.action_path }}/action/6_execute_steamcmd.sh
+    - shell: bash
+      run: ${{ github.action_path }}/action/2_show_configuration.sh
+    - shell: bash
+      run: ${{ github.action_path }}/action/3_generate_depot_manifests.sh
+    - shell: bash
+      run: ${{ github.action_path }}/action/4_generate_app_manifest.sh
+    - shell: bash
+      run: ${{ github.action_path }}/action/5_copy_steamguard_files.sh
+    - shell: bash
+      run: ${{ github.action_path }}/action/6_execute_steamcmd.sh
