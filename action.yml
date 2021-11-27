@@ -17,15 +17,15 @@ inputs:
   configVdf:
     required: true
     default: ''
-    description: 'The contents of the file at /home/runner/Steam/config/config.vdf'
-  ssfnFilePath:
+    description: 'The contents of the file at STEAM_HOME/config/config.vdf'
+  ssfnFileName:
     required: true
     default: ''
-    description: 'ls /home/runner/Steam/ssfn*'
+    description: 'ls STEAM_HOME/ssfn*.'
   ssfnFileContents:
     required: true
     default: ''
-    description: 'The contents of the file at ssfnFilePath.'
+    description: 'The contents of the file at STEAM_HOME/ssfnFileName.'
   appId:
     required: true
     default: ''
