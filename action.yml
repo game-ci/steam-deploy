@@ -10,6 +10,10 @@ inputs:
     required: true
     default: ''
     description: 'The password of your builder account.'
+  mfaCode:
+    required: true
+    default: ''
+    description: 'The MFA code emailed to your account.'
   configVdf:
     required: true
     default: ''
@@ -71,11 +75,13 @@ runs:
   steps:
     - id: steamsetup
       uses: CyberAndrii/setup-steamcmd@v1.1.1
-    - shell: bash
+    - id: deploy
+      shell: bash
       run: |
         export STEAMCMDDIR=${{ steps.steamsetup.outputs.directory }}
         export username=${{ inputs.username }}
         export password=${{ inputs.password }}
+        export mfaCode=${{ inputs.mfaCode }}
         export configVdf=${{ inputs.configVdf }}
         export ssfnFileName=${{ inputs.ssfnFileName }}
         export ssfnFileContents=${{ inputs.ssfnFileContents }}
@@ -102,3 +108,28 @@ runs:
         ${{ github.action_path }}/action/4_generate_app_manifest.sh
         ${{ github.action_path }}/action/5_copy_steamguard_files.sh
         ${{ github.action_path }}/action/6_execute_steamcmd.sh
+        echo "Exporting STEAM_CONFIG_VDF..."
+        export STEAM_CONFIG_VDF="$(cat /home/runner/Steam/config/config.vdf)"
+        echo "::set-output name=STEAM_CONFIG_VDF::$STEAM_CONFIG_VDF"
+        echo "Exporting STEAM_SSFN_FILE_NAME..."
+        export STEAM_SSFN_FILE_NAME="$(basename $(ls /home/runner/Steam/ssfn*))"
+        echo "::set-output name=STEAM_SSFN_FILE_NAME::$STEAM_SSFN_FILE_NAME"
+        echo "Exporting STEAM_SSFN_FILE_CONTENTS..."
+        export STEAM_SSFN_FILE_CONTENTS="$(cat /home/runner/Steam/$STEAM_SSFN_FILE_NAME | base64)"
+        echo "::set-output name=STEAM_SSFN_FILE_CONTENTS::$STEAM_SSFN_FILE_CONTENTS"
+        echo "Exported secrets!"
+    - uses: gliech/create-github-secret-action@v1
+      with:
+        name: STEAM_CONFIG_VDF
+        value: ${{ steps.deploy.outputs.STEAM_CONFIG_VDF }}
+        pa_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    - uses: gliech/create-github-secret-action@v1
+      with:
+        name: STEAM_SSFN_FILE_NAME
+        value: ${{ steps.deploy.outputs.STEAM_SSFN_FILE_NAME }}
+        pa_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    - uses: gliech/create-github-secret-action@v1
+      with:
+        name: STEAM_SSFN_FILE_CONTENTS
+        value: ${{ steps.deploy.outputs.STEAM_SSFN_FILE_CONTENTS }}
+        pa_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
