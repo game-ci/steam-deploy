@@ -97,13 +97,8 @@ runs:
         chmod +x ${{ github.action_path }}/action/4_generate_app_manifest.sh
         chmod +x ${{ github.action_path }}/action/5_copy_steamguard_files.sh
         chmod +x ${{ github.action_path }}/action/6_execute_steamcmd.sh
-    - shell: bash
-      run: ${{ github.action_path }}/action/2_show_configuration.sh
-    - shell: bash
-      run: ${{ github.action_path }}/action/3_generate_depot_manifests.sh
-    - shell: bash
-      run: ${{ github.action_path }}/action/4_generate_app_manifest.sh
-    - shell: bash
-      run: ${{ github.action_path }}/action/5_copy_steamguard_files.sh
-    - shell: bash
-      run: ${{ github.action_path }}/action/6_execute_steamcmd.sh
+        ${{ github.action_path }}/action/2_show_configuration.sh
+        ${{ github.action_path }}/action/3_generate_depot_manifests.sh
+        ${{ github.action_path }}/action/4_generate_app_manifest.sh
+        ${{ github.action_path }}/action/5_copy_steamguard_files.sh
+        ${{ github.action_path }}/action/6_execute_steamcmd.sh
