@@ -33,7 +33,6 @@ jobs:
     name: Deployment to Steam ☁
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - uses: game-ci/steam-deploy@v1
         with:
           username: ${{ secrets.STEAM_USERNAME }}

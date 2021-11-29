@@ -76,6 +76,7 @@ if [ -n "$configVdf" ]; then
   echo "Copying /home/runner/Steam/config/config.vdf..."
   echo "$configVdf" > /home/runner/Steam/config/config.vdf
   chmod 777 /home/runner/Steam/config/config.vdf
+  cat /home/runner/Steam/config/config.vdf
 fi;
 
 if [ -n "$ssfnFileName" ]; then
@@ -105,23 +106,25 @@ steamcmd +login "$username" "$password" "$mfaCode" +run_app_build manifest.vdf +
     echo "#             Errors            #"
     echo "#################################"
     echo ""
-    echo "Listing current folder and rootpath"
+    echo "Listing current folder, rootpath, and STEAM_HOME"
     echo ""
     ls -alh
     echo ""
     ls -alh $rootPath
     echo ""
+    ls -alh /home/runner/Steam
+    echo ""
     echo "Listing logs folder:"
     echo ""
-    ls -Ralph /home/runner/Steam/Steam/logs/
+    ls -Ralph /home/runner/Steam/logs/
     echo ""
     echo "Displaying error log"
     echo ""
-    cat /home/runner/Steam/Steam/logs/stderr.txt
+    cat /home/runner/Steam/logs/stderr.txt
     echo ""
     echo "Displaying bootstrapper log"
     echo ""
-    cat /home/runner/Steam/Steam/logs/bootstrap_log.txt
+    cat /home/runner/Steam/logs/bootstrap_log.txt
     echo ""
     echo "#################################"
     echo "#             Output            #"
