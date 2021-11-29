@@ -100,7 +100,7 @@ echo ""
 
 echo "$steamExecutable"
 echo ""
-steamcmd +login "$username" "$password" "$mfaCode" +run_app_build manifest.vdf +quit || (
+steamcmd +login "$username" "$password" "$mfaCode" +run_app_build $(pwd)/manifest.vdf +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
