@@ -18,6 +18,18 @@ inputs:
     required: false
     default: ''
     description: 'The MFA code emailed to your account.'
+  configVdf:
+    required: false
+    default: ''
+    description: 'The contents of STEAM_HOME/config/config.vdf'
+  ssfnFileName:
+    required: false
+    default: ''
+    description: 'ls STEAM_HOME/ssfn'
+  ssfnFileName:
+    required: false
+    default: ''
+    description: 'The contents of the file at STEAM_HOME/ssfnFileName.'
   appId:
     required: false
     default: ''
@@ -75,9 +87,9 @@ runs:
         export password=${{ inputs.password }}
         export personalAccessToken=${{ inputs.personalAccessToken }}
         export mfaCode=${{ inputs.mfaCode }}
-        export configVdf=${{ secrets.STEAM_CONFIG_VDF }}
-        export ssfnFileName=${{ secrets.STEAM_SSFN_FILE_NAME }}
-        export ssfnFileContents=${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
+        export configVdf=${{ inputs.configVdf }}
+        export ssfnFileName=${{ inputs.ssfnFileName }}
+        export ssfnFileContents=${{ inputs.ssfnFileContents }}
         export appId=${{ inputs.appId }}
         export buildDescription=${{ inputs.buildDescription }}
         export rootPath=${{ inputs.rootPath }}
