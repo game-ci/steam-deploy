@@ -13,7 +13,7 @@ if [ -n "$configVdf" ]; then
   chmod 777 /home/runner/Steam/config/config.vdf
 fi;
 
-if [ -n "$ssfnFileName" && -n "$ssfnFileContents" ]; then
+if [ -n "$ssfnFileName" ]; then
   echo "$ssfnFileContents" | base64 -d - > "/home/runner/Steam/$ssfnFileName"
   chmod 777 "/home/runner/Steam/$ssfnFileName"
 fi;

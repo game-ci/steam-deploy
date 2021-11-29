@@ -7,17 +7,17 @@ inputs:
     default: ''
     description: 'The username of your builder account.'
   password:
-    required: true
+    required: false
     default: ''
     description: 'The password of your builder account.'
-  personalAccessToken:
-    required: true
-    default: ''
-    description: 'Personal Access Token with full repo access.'
   mfaCode:
     required: false
     default: ''
-    description: 'The MFA code emailed to your account.'
+    description: 'The MFA code emailed to your builder account.'
+  personalAccessToken:
+    required: false
+    default: ''
+    description: 'Personal Access Token (PAT) with full repo access.'
   configVdf:
     required: false
     default: ''
@@ -29,7 +29,7 @@ inputs:
   ssfnFileContents:
     required: false
     default: ''
-    description: 'The contents of the file at STEAM_HOME/ssfnFileName.'
+    description: 'The contents of the file at STEAM_HOME/ssfnFileName'
   appId:
     required: false
     default: ''
@@ -85,8 +85,8 @@ runs:
         export STEAMCMDDIR=${{ steps.steamsetup.outputs.directory }}
         export username=${{ inputs.username }}
         export password=${{ inputs.password }}
-        export personalAccessToken=${{ inputs.personalAccessToken }}
         export mfaCode=${{ inputs.mfaCode }}
+        export personalAccessToken=${{ inputs.personalAccessToken }}
         export configVdf=${{ inputs.configVdf }}
         export ssfnFileName=${{ inputs.ssfnFileName }}
         export ssfnFileContents=${{ inputs.ssfnFileContents }}
