@@ -82,7 +82,7 @@ runs:
     - id: deploy
       shell: bash
       run: |
-        export STEAMCMDDIR=${{ steps.steamsetup.outputs.directory }}
+        export steamExecutable=${{ steps.steamsetup.outputs.executable }}
         export username=${{ inputs.username }}
         export password=${{ inputs.password }}
         export mfaCode=${{ inputs.mfaCode }}
