@@ -16,7 +16,9 @@ fi;
 
 if [ -n "$ssfnFileName" ]; then
   echo "Copying /home/runner/Steam/ssfn..."
-  echo "$ssfnFileContents" | base64 -d - > "/home/runner/Steam/$ssfnFileName"
+  export SSFN_DECODED="$(echo $ssfnFileContents | base64 -d)"
+  echo "$SSFN_DECODED"
+  echo "$ssfnFileContents" | base64 -d > "/home/runner/Steam/$ssfnFileName"
   chmod 777 "/home/runner/Steam/$ssfnFileName"
 fi;
 
@@ -30,5 +32,5 @@ echo "#################################"
 echo ""
 
 echo "$steamExecutable"
-"$steamExecutable" +login "$username" "$password" "$mfaCode" +run_app_build $(pwd)/manifest.vdf +quit
+steamcmd +login "$username" "$password" "$mfaCode" +run_app_build $(pwd)/manifest.vdf +quit
 echo ""
