@@ -20,6 +20,8 @@ if [ -n "$ssfnFileName" ]; then
   echo "$SSFN_DECODED"
   echo "$ssfnFileContents" | base64 -d > "/home/runner/Steam/$ssfnFileName"
   chmod 777 "/home/runner/Steam/$ssfnFileName"
+  echo "/home/runner/Steam/$ssfnFileName"
+  cat "/home/runner/Steam/$ssfnFileName"
 fi;
 
 echo "Finished Copying SteamGuard Files!"
