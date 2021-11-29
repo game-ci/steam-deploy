@@ -8,12 +8,12 @@ echo ""
 
 mkdir -p /home/runner/Steam/config
 
-if [[ -n "$configVdf" ]]; then
+if [ -n "$configVdf" ]; then
   echo "$configVdf" > /home/runner/Steam/config/config.vdf
   chmod 777 /home/runner/Steam/config/config.vdf
 fi;
 
-if [[ -n "$ssfnFileName" && -n "$ssfnFileContents" ]]; then
+if [ -n "$ssfnFileName" && -n "$ssfnFileContents" ]; then
   echo "$ssfnFileContents" | base64 -d - > "/home/runner/Steam/$ssfnFileName"
   chmod 777 "/home/runner/Steam/$ssfnFileName"
 fi;
