@@ -26,7 +26,7 @@ inputs:
     required: false
     default: ''
     description: 'ls STEAM_HOME/ssfn'
-  ssfnFileName:
+  ssfnFileContents:
     required: false
     default: ''
     description: 'The contents of the file at STEAM_HOME/ssfnFileName.'
