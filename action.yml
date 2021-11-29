@@ -103,16 +103,10 @@ runs:
         export depot8Path=${{ inputs.depot8Path }}
         export depot9Path=${{ inputs.depot9Path }}
         export releaseBranch=${{ inputs.releaseBranch }}
-        chmod +x ${{ github.action_path }}/action/2_show_configuration.sh
-        chmod +x ${{ github.action_path }}/action/3_generate_depot_manifests.sh
-        chmod +x ${{ github.action_path }}/action/4_generate_app_manifest.sh
-        chmod +x ${{ github.action_path }}/action/5_copy_steamguard_files.sh
-        chmod +x ${{ github.action_path }}/action/6_execute_steamcmd.sh
-        ${{ github.action_path }}/action/2_show_configuration.sh
-        ${{ github.action_path }}/action/3_generate_depot_manifests.sh
-        ${{ github.action_path }}/action/4_generate_app_manifest.sh
-        ${{ github.action_path }}/action/5_copy_steamguard_files.sh
-        ${{ github.action_path }}/action/6_execute_steamcmd.sh
+        chmod +x ${{ github.action_path }}/action/generate_manifests.sh
+        chmod +x ${{ github.action_path }}/action/execute_steamcmd.sh
+        ${{ github.action_path }}/action/generate_manifests.sh
+        ${{ github.action_path }}/action/execute_steamcmd.sh
         echo "Exporting STEAM_CONFIG_VDF..."
         export STEAM_CONFIG_VDF="$(cat /home/runner/Steam/config/config.vdf)"
         echo "::set-output name=STEAM_CONFIG_VDF::$STEAM_CONFIG_VDF"
