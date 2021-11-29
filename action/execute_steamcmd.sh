@@ -7,13 +7,18 @@ echo "#################################"
 echo ""
 
 mkdir -p /home/runner/Steam/config
-echo "$configVdf" > /home/runner/Steam/config/config.vdf
-echo "$ssfnFileContents" | base64 -d - > "/home/runner/Steam/$ssfnFileName"
 
-chmod 777 /home/runner/Steam/config/config.vdf
-chmod 777 "/home/runner/Steam/$ssfnFileName"
+if [[ -n "$configVdf" ]]; then
+  echo "$configVdf" > /home/runner/Steam/config/config.vdf
+  chmod 777 /home/runner/Steam/config/config.vdf
+fi;
 
-echo "Copied SteamGuard Files!"
+if [[ -n "$ssfnFileName" && -n "$ssfnFileContents" ]]; then
+  echo "$ssfnFileContents" | base64 -d - > "/home/runner/Steam/$ssfnFileName"
+  chmod 777 "/home/runner/Steam/$ssfnFileName"
+fi;
+
+echo "Finished Copying SteamGuard Files!"
 echo ""
 
 # Debugging urls:
@@ -59,15 +64,15 @@ echo ""
     echo ""
     echo "Listing logs folder:"
     echo ""
-    ls -Ralph /github/home/Steam/logs/
+    ls -Ralph /home/runner/Steam/logs/
     echo ""
     echo "Displaying error log"
     echo ""
-    cat /github/home/Steam/logs/stderr.txt
+    cat /home/runner/Steam/logs/stderr.txt
     echo ""
     echo "Displaying bootstrapper log"
     echo ""
-    cat /github/home/Steam/logs/bootstrap_log.txt
+    cat /home/runner/Steam/logs/bootstrap_log.txt
     echo ""
     echo "#################################"
     echo "#             Output            #"
