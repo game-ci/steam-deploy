@@ -65,16 +65,16 @@ inputs:
 outputs:
   manifest:
     description: "The path to the generated manifest.vdf"
-    value: ${{ steps.deployment.outputs.manifest }}
+    value: ${{ steps.steam-deploy.outputs.manifest }}
 runs:
   using: "composite"
   steps:
-    - id: setup-steam
+    - id: setup-steamcmd
       uses: CyberAndrii/setup-steamcmd@v1.1.1
-    - id: deployment
+    - id: steam-deploy
       env:
-        STEAM_HOME: ${{ steps.setup-steam.outputs.directory }}
-        STEAM_CMD: ${{ steps.setup-steam.outputs.executable }}
+        STEAM_HOME: ${{ steps.setup-steamcmd.outputs.directory }}
+        STEAM_CMD: ${{ steps.setup-steamcmd.outputs.executable }}
         username: ${{ inputs.username }}
         password: ${{ inputs.password }}
         configVdf: ${{ inputs.configVdf }}
