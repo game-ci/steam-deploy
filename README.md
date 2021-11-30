@@ -29,8 +29,7 @@ _(The parameters are explained below)_
 
 ```yaml
 jobs:
-  deploy:
-    name: Deploy to Steam ☁
+  deployToSteam:
     runs-on: ubuntu-latest
     steps:
       - uses: game-ci/steam-deploy@v1
@@ -41,7 +40,7 @@ jobs:
           ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: 1234560
-          buildDescription: v0.0.1
+          buildDescription: v1.2.3
           rootPath: build
           depot1Path: StandaloneWindows64
           depot2Path: StandaloneLinux64
