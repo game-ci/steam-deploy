@@ -6,6 +6,10 @@ inputs:
     required: true
     default: ''
     description: 'The username of your builder account.'
+  password:
+    required: true
+    default: ''
+    description: 'The password of your builder account.'
   configVdf:
     required: true
     default: ''
@@ -72,6 +76,7 @@ runs:
         STEAM_HOME: ${{ steps.setup-steam.outputs.directory }}
         STEAM_CMD: ${{ steps.setup-steam.outputs.executable }}
         username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
         configVdf: ${{ inputs.configVdf }}
         ssfnFileName: ${{ inputs.ssfnFileName }}
         ssfnFileContents: ${{ inputs.ssfnFileContents }}

@@ -36,6 +36,7 @@ jobs:
       - uses: game-ci/steam-deploy@v1
         with:
           username: ${{ secrets.STEAM_USERNAME }}
+          password: ${{ secrets.STEAM_PASSWORD }}
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
           ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
@@ -53,6 +54,10 @@ jobs:
 
 The username of the Steam Builder Account that you created in setup step 1.
 
+#### password
+
+The password of the Steam Builder Account that you created in setup step 1.
+
 #### configVdf, ssfnFileName, and ssfnFileContents
 
 Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard. 
@@ -60,11 +65,12 @@ This means that simply using username and password isn't enough to authenticate 
 Fortunately, GitHub runners share the same machine ID, so it is possible to go through the MFA process only once by using GitHub Secrets for configVdf, ssfnFileName, and ssfnFileContents.
 
 Setup GitHub Secrets for configVdf, ssfnFileName, and ssfnFileContents by following these steps:
-1. Install [Valve's offical steamcmd]() on your local machine
+1. Install [Valve's offical steamcmd](https://partner.steamgames.com/doc/sdk/uploading#1) on your local machine. All following steps will also be done on your local machine.
 1. Try to login with `steamcmd +login <user> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
-1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Copy the contents of that file to a GitHub Secret `STEAM_CONFIG_VDF`.
+1. Validate that the MFA process is complete by running `steamcmd +login <user> <password> +quit` again. It should not ask for the MFA code again.
+1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Use `cat config/config.vdf | base64 > config_base64.txt` to encode the file. Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
 1. That folder will also contain a file whose name looks like `ssfn<numbers>`. Copy the name of that file to a GitHub Secret `STEAM_SSFN_FILE_NAME`.
-1. Use `cat <ssfnFileName> | base64 > secret.txt` to encode the contents of your ssfn file. Copy the contents of `secret.txt` to a GitHub Secret `STEAM_SSFN_FILE_CONTENTS`.
+1. Use `cat <ssfnFileName> | base64 > ssfn_base64.txt` to encode the contents of your ssfn file. Copy the contents of `ssfn_base64.txt` to a GitHub Secret `STEAM_SSFN_FILE_CONTENTS`.
 
 #### appId
 
