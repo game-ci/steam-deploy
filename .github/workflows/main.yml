@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deployment:
-    name: Deployment to Steam ☁
+  deploy:
+    name: Deploy to Steam ☁
     runs-on: ubuntu-latest
     steps:
       - run: |
