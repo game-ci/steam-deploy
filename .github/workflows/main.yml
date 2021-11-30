@@ -6,16 +6,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  testDeploy:
     name: Deploy to Steam ☁
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - run: |
           mkdir -p build/StandaloneWindows64
+          touch build/StandaloneWindows64/steam-deploy-test.txt
           mkdir -p build/StandaloneLinux64
-          touch build/StandaloneWindows64/test.txt
-          touch build/StandaloneLinux64/test.txt
-          chmod -R 777 build
+          touch build/StandaloneLinux64/steam-deploy-test.txt
       - uses: ./
         with:
           username: ${{ secrets.STEAM_USERNAME }}
