@@ -70,24 +70,24 @@ echo "#    Copying SteamGuard Files   #"
 echo "#################################"
 echo ""
 
-mkdir -p /home/runner/Steam/config
+mkdir -p "$STEAM_HOME/config"
+mkdir -p "/home/runner/Steam/config"
 
-if [ -n "$configVdf" ]; then
-  echo "Copying /home/runner/Steam/config/config.vdf..."
-  echo "$configVdf" > /home/runner/Steam/config/config.vdf
-  chmod 777 /home/runner/Steam/config/config.vdf
-  cat /home/runner/Steam/config/config.vdf
-fi;
+echo "Copying $STEAM_HOME/config/config.vdf..."
+echo "$configVdf" > "$STEAM_HOME/config/config.vdf"
+chmod 777 "$STEAM_HOME/config/config.vdf"
 
-if [ -n "$ssfnFileName" ]; then
-  echo "Copying /home/runner/Steam/ssfn..."
-  export SSFN_DECODED="$(echo $ssfnFileContents | base64 -d)"
-  echo "$SSFN_DECODED"
-  echo "$ssfnFileContents" | base64 -d > "/home/runner/Steam/$ssfnFileName"
-  chmod 777 "/home/runner/Steam/$ssfnFileName"
-  echo "/home/runner/Steam/$ssfnFileName"
-  cat "/home/runner/Steam/$ssfnFileName"
-fi;
+echo "Copying /home/runner/Steam/config/config.vdf..."
+echo "$configVdf" > "/home/runner/Steam/config/config.vdf"
+chmod 777 "/home/runner/Steam/config/config.vdf"
+
+echo "Copying $STEAM_HOME/ssfn..."
+echo "$ssfnFileContents" | base64 -d > "$STEAM_HOME/$ssfnFileName"
+chmod 777 "$STEAM_HOME/$ssfnFileName"
+
+echo "Copying /home/runner/Steam/ssfn..."
+echo "$ssfnFileContents" | base64 -d > "/home/runner/Steam/$ssfnFileName"
+chmod 777 "/home/runner/Steam/$ssfnFileName"
 
 echo "Finished Copying SteamGuard Files!"
 echo ""
@@ -98,33 +98,29 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-echo "$steamExecutable"
-echo ""
-steamcmd +login "$username" "$password" "$mfaCode" +run_app_build $(pwd)/manifest.vdf +quit || (
+$STEAM_CMD +login "$username" +run_app_build $(pwd)/manifest.vdf +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
     echo "#################################"
     echo ""
-    echo "Listing current folder, rootpath, and STEAM_HOME"
+    echo "Listing current folder and rootpath"
     echo ""
     ls -alh
     echo ""
     ls -alh $rootPath
     echo ""
-    ls -alh /home/runner/Steam
-    echo ""
     echo "Listing logs folder:"
     echo ""
-    ls -Ralph /home/runner/Steam/logs/
+    ls -Ralph "/home/runner/Steam/logs/"
     echo ""
     echo "Displaying error log"
     echo ""
-    cat /home/runner/Steam/logs/stderr.txt
+    cat "/home/runner/Steam/logs/stderr.txt"
     echo ""
     echo "Displaying bootstrapper log"
     echo ""
-    cat /home/runner/Steam/logs/bootstrap_log.txt
+    cat "/home/runner/Steam/logs/bootstrap_log.txt"
     echo ""
     echo "#################################"
     echo "#             Output            #"
