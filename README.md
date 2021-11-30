@@ -1,4 +1,4 @@
-# Steam deploy
+# Steam Deploy
 Github Action to deploy a game to Steam
 
 ## Setup
@@ -52,11 +52,11 @@ jobs:
 
 #### username
 
-The username of the Steam Builder Account that you created in setup step 1.
+The username of the Steam Build Account that you created in setup step 1.
 
 #### password
 
-The password of the Steam Builder Account that you created in setup step 1.
+The password of the Steam Build Account that you created in setup step 1.
 
 #### configVdf, ssfnFileName, and ssfnFileContents
 
