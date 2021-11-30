@@ -63,7 +63,7 @@ branding:
   icon: 'package'
   color: 'gray-dark'
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - id: steamsetup
       uses: CyberAndrii/setup-steamcmd@v1.1.1
@@ -73,9 +73,9 @@ runs:
         export STEAM_HOME=${{ steps.steamsetup.outputs.directory }}
         export STEAM_CMD=${{ steps.steamsetup.outputs.executable }}
         export username=${{ inputs.username }}
-        export configVdf=${{ inputs.configVdf }}
+        export configVdf="${{ inputs.configVdf }}"
         export ssfnFileName=${{ inputs.ssfnFileName }}
-        export ssfnFileContents=${{ inputs.ssfnFileContents }}
+        export ssfnFileContents="${{ inputs.ssfnFileContents }}"
         export appId=${{ inputs.appId }}
         export buildDescription=${{ inputs.buildDescription }}
         export rootPath=${{ inputs.rootPath }}
