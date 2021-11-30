@@ -58,36 +58,37 @@ inputs:
   releaseBranch:
     required: false
     description: 'The branch within steam that this build will be automatically put live on.'
-outputs: {}
-branding:
-  icon: 'package'
-  color: 'gray-dark'
+outputs:
+  manifest:
+    description: "The path to the generated manifest.vdf"
+    value: ${{ steps.deployment.outputs.manifest }}
 runs:
   using: "composite"
   steps:
-    - id: steamsetup
+    - id: setup-steam
       uses: CyberAndrii/setup-steamcmd@v1.1.1
-    - id: deploy
-      shell: bash
+    - id: deployment
+      env:
+        STEAM_HOME: ${{ steps.setup-steam.outputs.directory }}
+        STEAM_CMD: ${{ steps.setup-steam.outputs.executable }}
+        username: ${{ inputs.username }}
+        configVdf: ${{ inputs.configVdf }}
+        ssfnFileName: ${{ inputs.ssfnFileName }}
+        ssfnFileContents: ${{ inputs.ssfnFileContents }}
+        appId: ${{ inputs.appId }}
+        buildDescription: ${{ inputs.buildDescription }}
+        rootPath: ${{ inputs.rootPath }}
+        depot1Path: ${{ inputs.depot1Path }}
+        depot2Path: ${{ inputs.depot2Path }}
+        depot3Path: ${{ inputs.depot3Path }}
+        depot4Path: ${{ inputs.depot4Path }}
+        depot5Path: ${{ inputs.depot5Path }}
+        depot6Path: ${{ inputs.depot6Path }}
+        depot7Path: ${{ inputs.depot7Path }}
+        depot8Path: ${{ inputs.depot8Path }}
+        depot9Path: ${{ inputs.depot9Path }}
+        releaseBranch: ${{ inputs.releaseBranch }}
       run: |
-        export STEAM_HOME=${{ steps.steamsetup.outputs.directory }}
-        export STEAM_CMD=${{ steps.steamsetup.outputs.executable }}
-        export username=${{ inputs.username }}
-        export configVdf="${{ inputs.configVdf }}"
-        export ssfnFileName=${{ inputs.ssfnFileName }}
-        export ssfnFileContents="${{ inputs.ssfnFileContents }}"
-        export appId=${{ inputs.appId }}
-        export buildDescription=${{ inputs.buildDescription }}
-        export rootPath=${{ inputs.rootPath }}
-        export depot1Path=${{ inputs.depot1Path }}
-        export depot2Path=${{ inputs.depot2Path }}
-        export depot3Path=${{ inputs.depot3Path }}
-        export depot4Path=${{ inputs.depot4Path }}
-        export depot5Path=${{ inputs.depot5Path }}
-        export depot6Path=${{ inputs.depot6Path }}
-        export depot7Path=${{ inputs.depot7Path }}
-        export depot8Path=${{ inputs.depot8Path }}
-        export depot9Path=${{ inputs.depot9Path }}
-        export releaseBranch=${{ inputs.releaseBranch }}
-        chmod +x ${{ github.action_path }}/steam_deploy.sh
         ${{ github.action_path }}/steam_deploy.sh
+        echo "::set-output name=manifest::$(pwd)/manifest.vdf"
+      shell: bash
