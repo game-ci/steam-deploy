@@ -20,10 +20,9 @@ until [ $i -gt 9 ]; do
 "DepotBuildConfig"
 {
   "DepotID" "$currentDepot"
-  "ContentRoot" "$(pwd)/$rootPath"
   "FileMapping"
   {
-    "LocalPath" "$currentDepotPath"
+    "LocalPath" "./$currentDepotPath/*"
     "DepotPath" "."
     "recursive" "1"
   }
@@ -52,7 +51,7 @@ cat << EOF > "manifest.vdf"
   "appid" "$appId"
   "desc" "$buildDescription"
   "buildoutput" "BuildOutput"
-  "contentroot" "$(pwd)"
+  "contentroot" "$(pwd)/$rootPath"
   "setlive" "$releaseBranch"
 
   "depots"
