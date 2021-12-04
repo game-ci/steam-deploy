@@ -1,5 +1,5 @@
-# Steam deploy
-Github Action to deploy a game to steam
+# Steam Deploy
+Github Action to deploy a game to Steam
 
 ## Setup
 
@@ -17,7 +17,7 @@ https://partner.steamgames.com/doc/sdk/uploading#Build_Account
 
 In order to upload a build, this action is assuming that you have created that build in a previous `step` or `job`.
 
-For an example of how to do this in unity, see [Unity Actions](https://github.com/webbertakken/unity-actions).
+For an example of how to do this in Unity, see [Unity Actions](https://github.com/game-ci/unity-actions).
 
 The exported artifact will be used in the next step.
 
@@ -29,45 +29,45 @@ _(The parameters are explained below)_
 
 ```yaml
 jobs:
-  deploy:
-    name: Deploy to Steam ☁
+  deployToSteam:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     steps:
-      - uses: actions/checkout@v2
-      - uses: webbertakken/steam-deploy@<version>
+      - uses: game-ci/steam-deploy@v1
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
-          mfaCode:  ${{ secrets.STEAM_MFA_CODE }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+          ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
+          ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: 1234560
-          buildDescription: v0.0.1
-          rootPath: builds
+          buildDescription: v1.2.3
+          rootPath: build
           depot1Path: StandaloneWindows64
           depot2Path: StandaloneLinux64
-          releaseBranch: PreRelease
-          localContentServer: LocalContentServer
+          releaseBranch: prerelease
 ```
 
 ## Configuration
 
 #### username
 
-The username of the Steam Builder Account that you created in setup step 1.
+The username of the Steam Build Account that you created in setup step 1.
 
 #### password
 
-The password of the Steam Builder Account that you created in setup step 1.
+The password of the Steam Build Account that you created in setup step 1.
 
-#### mfaCode
+#### configVdf, ssfnFileName, and ssfnFileContents
 
-The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.
-
-There is a [3 step process](https://github.com/game-ci/steam-deploy/issues/4#issuecomment-751325644) required to get MFA to work, which is a bit involved.
-1. Build 1... Run a build which attempts to use steam-upload... it will fail, but will send you a steam guard email.
-2. Build 2... Set up artifacts to download steam ID files. Enter steam guard email MFA using mfaCode. 
-3. Build 3 onwards... Ensure you restore steam ID files every build. MFA is then no longer required.
+Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard. 
+This means that simply using username and password isn't enough to authenticate with Steam. 
+However, it is possible to go through the MFA process only once by setting up GitHub Secrets for configVdf, ssfnFileName, and ssfnFileContents with these steps:
+1. Install [Valve's offical steamcmd](https://partner.steamgames.com/doc/sdk/uploading#1) on your local machine. All following steps will also be done on your local machine.
+1. Try to login with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
+1. Validate that the MFA process is complete by running `steamcmd +login <username> <password> +quit` again. It should not ask for the MFA code again.
+1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Use `cat config/config.vdf | base64 > config_base64.txt` to encode the file. Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
+1. That folder will also contain a file whose name looks like `ssfn<numbers>`. Copy the name of that file to a GitHub Secret `STEAM_SSFN_FILE_NAME`.
+1. Use `cat <ssfnFileName> | base64 > ssfn_base64.txt` to encode the contents of your ssfn file. Copy the contents of `ssfn_base64.txt` to a GitHub Secret `STEAM_SSFN_FILE_CONTENTS`.
 
 #### appId
 
@@ -98,7 +98,3 @@ _(feel free to contribute if you have a more complex use case!)_
 The branch within steam that this build will be automatically put live on.
 
 It is recommended to **not use** branch `default` for this as it is potentially dangerous.
-
-#### localContentServer
-
-The path to your local content server.

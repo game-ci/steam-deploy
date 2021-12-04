@@ -19,7 +19,7 @@ When fixing a bug it is fine to submit a pull request right away.
 
 Steps to be performed to submit a pull request:
 
-1. Fork the repository and create your branch from `master`.
+1. Fork the repository and create your branch from `main`.
 2. Fill out the description, link any related issues and submit your pull request.
 
 #### License

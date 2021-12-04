@@ -2,13 +2,6 @@ name: 'Steam - Deploy'
 author: Webber Takken <webber@takken.io>
 description: 'Deploy game builds to Steam using the SteamSDK.'
 inputs:
-  appId:
-    required: true
-    default: ''
-    description: 'The app id within steam partner network.'
-  buildDescription:
-    required: false
-    description: 'Description for this build.'
   username:
     required: true
     default: ''
@@ -17,14 +10,91 @@ inputs:
     required: true
     default: ''
     description: 'The password of your builder account.'
-  mfaCode:
-    required: false
+  configVdf:
+    required: true
     default: ''
-    description: 'The multi-factor authentication code from steam guard, that is emailed when attempting to sign in.'
-outputs: {}
-branding:
-  icon: 'package'
-  color: 'gray-dark'
+    description: 'The contents of STEAM_HOME/config/config.vdf.'
+  ssfnFileName:
+    required: true
+    default: ''
+    description: 'The basename of the STEAM_HOME/ssfn file.'
+  ssfnFileContents:
+    required: true
+    default: ''
+    description: 'The contents of the file at STEAM_HOME/ssfnFileName.'
+  appId:
+    required: true
+    default: ''
+    description: 'The app id within steam partner network.'
+  buildDescription:
+    required: false
+    description: 'Description for this build.'
+  rootPath:
+    required: false
+    description: 'The root path to your builds. This is the base of which depots will search your files.'
+  depot1Path:
+    required: false
+    description: 'The path to depot1.'
+  depot2Path:
+    required: false
+    description: 'The path to depot2.'
+  depot3Path:
+    required: false
+    description: 'The path to depot3.'
+  depot4Path:
+    required: false
+    description: 'The path to depot4.'
+  depot5Path:
+    required: false
+    description: 'The path to depot5.'
+  depot6Path:
+    required: false
+    description: 'The path to depot6.'
+  depot7Path:
+    required: false
+    description: 'The path to depot7.'
+  depot8Path:
+    required: false
+    description: 'The path to depot8.'
+  depot9Path:
+    required: false
+    description: 'The path to depot9.'
+  releaseBranch:
+    required: false
+    description: 'The branch within steam that this build will be automatically put live on.'
+outputs:
+  manifest:
+    description: "The path to the generated manifest.vdf"
+    value: ${{ steps.steam-deploy.outputs.manifest }}
 runs:
-  using: 'docker'
-  image: 'action/Dockerfile'
+  using: "composite"
+  steps:
+    - id: setup-steamcmd
+      uses: CyberAndrii/setup-steamcmd@v1.1.1
+    - id: steam-deploy
+      env:
+        STEAM_HOME: ${{ steps.setup-steamcmd.outputs.directory }}
+        STEAM_CMD: ${{ steps.setup-steamcmd.outputs.executable }}
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+        configVdf: ${{ inputs.configVdf }}
+        ssfnFileName: ${{ inputs.ssfnFileName }}
+        ssfnFileContents: ${{ inputs.ssfnFileContents }}
+        appId: ${{ inputs.appId }}
+        buildDescription: ${{ inputs.buildDescription }}
+        rootPath: ${{ inputs.rootPath }}
+        depot1Path: ${{ inputs.depot1Path }}
+        depot2Path: ${{ inputs.depot2Path }}
+        depot3Path: ${{ inputs.depot3Path }}
+        depot4Path: ${{ inputs.depot4Path }}
+        depot5Path: ${{ inputs.depot5Path }}
+        depot6Path: ${{ inputs.depot6Path }}
+        depot7Path: ${{ inputs.depot7Path }}
+        depot8Path: ${{ inputs.depot8Path }}
+        depot9Path: ${{ inputs.depot9Path }}
+        releaseBranch: ${{ inputs.releaseBranch }}
+      run: |
+        chmod +x ${{ github.action_path }}/steam_deploy.sh
+        ${{ github.action_path }}/steam_deploy.sh
+        echo "::set-output name=manifest::$(pwd)/manifest.vdf"
+      shell: bash

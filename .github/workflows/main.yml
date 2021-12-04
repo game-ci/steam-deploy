@@ -1,25 +1,31 @@
 name: 🚀
 
 on:
+  push: { branches: [main] }
   pull_request: {}
-  push: { branches: [master] }
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  testDeploy:
     name: Deploy to Steam ☁
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     steps:
       - uses: actions/checkout@v2
+      - run: |
+          mkdir -p build/StandaloneWindows64
+          touch build/StandaloneWindows64/steam-deploy-test.txt
+          mkdir -p build/StandaloneLinux64
+          touch build/StandaloneLinux64/steam-deploy-test.txt
       - uses: ./
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+          ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
+          ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: 1234560
           buildDescription: v0.0.1
-          rootPath: builds
+          rootPath: build
           depot1Path: StandaloneWindows64
           depot2Path: StandaloneLinux64
-          releaseBranch: PreRelease
-          localContentServer: LocalContentServer
+          releaseBranch: prerelease
