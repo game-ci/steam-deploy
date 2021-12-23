@@ -66,8 +66,8 @@ However, it is possible to go through the MFA process only once by setting up Gi
 1. Try to login with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
 1. Validate that the MFA process is complete by running `steamcmd +login <username> <password> +quit` again. It should not ask for the MFA code again.
 1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Use `cat config/config.vdf | base64 > config_base64.txt` to encode the file. Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
-1. That folder will also contain a file whose name looks like `ssfn<numbers>`. Copy the name of that file to a GitHub Secret `STEAM_SSFN_FILE_NAME`.
-1. Use `cat <ssfnFileName> | base64 > ssfn_base64.txt` to encode the contents of your ssfn file. Copy the contents of `ssfn_base64.txt` to a GitHub Secret `STEAM_SSFN_FILE_CONTENTS`.
+1. That folder will also contain two files whose names look like `ssfn<numbers>`, **but one of them is a hidden file**. [Find the hidden one](https://support.microsoft.com/en-us/windows/view-hidden-files-and-folders-in-windows-97fbc472-c603-9d90-91d0-1166d1d9f4b5), then copy the name of that file to a GitHub Secret `STEAM_SSFN_FILE_NAME`.
+1. Use `cat <ssfnFileName> | base64 > ssfn_base64.txt` to encode the contents of the hidden ssfn file. Copy the contents of `ssfn_base64.txt` to a GitHub Secret `STEAM_SSFN_FILE_CONTENTS`.
 
 #### appId
 
@@ -97,4 +97,4 @@ _(feel free to contribute if you have a more complex use case!)_
 
 The branch within steam that this build will be automatically put live on.
 
-It is recommended to **not use** branch `default` for this as it is potentially dangerous.
+Note that the `default` branch [has been observed to not work](https://github.com/game-ci/steam-deploy/issues/19) as a release branch, presumably because it is potentially dangerous.
