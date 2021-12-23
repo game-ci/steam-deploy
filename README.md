@@ -97,4 +97,4 @@ _(feel free to contribute if you have a more complex use case!)_
 
 The branch within steam that this build will be automatically put live on.
 
-It is recommended to **not use** branch `default` for this as it is potentially dangerous.
+Note that the `default` branch [has been observed to not work](https://github.com/game-ci/steam-deploy/issues/19) as a release branch, presumably because it is potentially dangerous.
