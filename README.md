@@ -98,3 +98,12 @@ _(feel free to contribute if you have a more complex use case!)_
 The branch within steam that this build will be automatically put live on.
 
 Note that the `default` branch [has been observed to not work](https://github.com/game-ci/steam-deploy/issues/19) as a release branch, presumably because it is potentially dangerous.
+
+## Other Notes
+
+#### Excluded Files / Folders
+
+Certain file or folder patterns are excluded from the upload to Steam as they're unsafe to ship to players:
+
+- `*.pdb` - symbols files
+- `${depotPath}_BurstDebugInformation_DoNotShip` folders for each uploaded depot (e.g. `StandaloneWindows64_BurstDebugInformation_DoNotShip`) - a folder that Unity includes in builds with debugging or other information that isn't intended to be sent to players
