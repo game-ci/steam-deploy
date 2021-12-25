@@ -27,7 +27,8 @@ until [ $i -gt 9 ]; do
     "recursive" "1"
   }
   "FileExclusion" "*.pdb"
-  "FileExclusion" "$currentDepotPath/${currentDepotPath}_BurstDebugInformation_DoNotShip*"
+  "FileExclusion" "**/*_BurstDebugInformation_DoNotShip*"
+  "FileExclusion" "**/*_BackUpThisFolder_ButDontShipItWithYourGame*"
 }
 EOF
 
