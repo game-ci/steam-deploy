@@ -6,12 +6,21 @@ echo "#   Generating Depot Manifests  #"
 echo "#################################"
 echo ""
 
+if [ -n "$firstDepotIdOverride" ]; then
+  firstDepotId=$firstDepotIdOverride
+else
+  # The first depot ID of a standard Steam app is the app's ID plus one
+  firstDepotId=$((appId + 1))
+fi
+
 i=1;
 export DEPOTS="\n  "
 until [ $i -gt 9 ]; do
   eval "currentDepotPath=\$depot${i}Path"
   if [ -n "$currentDepotPath" ]; then
-    currentDepot=$((appId+i))
+    # depot1Path uses firstDepotId, depot2Path uses firstDepotId + 1, depot3Path uses firstDepotId + 2...
+    currentDepot=$((firstDepotId + i - 1))
+
     echo ""
     echo "Adding depot${currentDepot}.vdf ..."
     echo ""
