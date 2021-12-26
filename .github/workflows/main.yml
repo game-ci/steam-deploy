@@ -23,7 +23,8 @@ jobs:
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
           ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
-          appId: 1234560
+          appId: ${{ secrets.TEST_APP_ID }}
+          firstDepotIdOverride: ${{ secrets.TEST_FIRST_DEPOT_ID_OVERRIDE }}
           buildDescription: v0.0.1
           rootPath: build
           depot1Path: StandaloneWindows64
