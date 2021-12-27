@@ -106,4 +106,6 @@ Note that the `default` branch [has been observed to not work](https://github.co
 Certain file or folder patterns are excluded from the upload to Steam as they're unsafe to ship to players:
 
 - `*.pdb` - symbols files
-- `${depotPath}_BurstDebugInformation_DoNotShip` folders for each uploaded depot (e.g. `StandaloneWindows64_BurstDebugInformation_DoNotShip`) - a folder that Unity includes in builds with debugging or other information that isn't intended to be sent to players
+- Folders that Unity includes in builds with debugging or other information that isn't intended to be sent to players:
+    - `*_BurstDebugInformation_DoNotShip`
+    - `*_BackUpThisFolder_ButDontShipItWithYourGame`
