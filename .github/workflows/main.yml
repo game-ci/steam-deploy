@@ -6,9 +6,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  checkEnv:
+    name: Check Env 🔎
+    runs-on: ubuntu-latest
+    outputs:
+      usernameExists: ${{ steps.checkUsername.outputs.usernameExists }}
+    steps:
+      - id: checkUsername
+        env:
+          STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+        if: env.STEAM_USERNAME != ''
+        run: echo "::set-output name=usernameExists::true"
+
   testDeploy:
     name: Deploy to Steam ☁
     runs-on: ubuntu-latest
+
+    # Only run tests if secrets are available (e.g. not from PRs from forked repos)
+    needs: [checkEnv]
+    if: needs.checkEnv.outputs.usernameExists == 'true'
+
     steps:
       - uses: actions/checkout@v2
       - run: |
@@ -23,7 +40,8 @@ jobs:
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
           ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
-          appId: 1234560
+          appId: ${{ secrets.TEST_APP_ID }}
+          firstDepotIdOverride: ${{ secrets.TEST_FIRST_DEPOT_ID_OVERRIDE }}
           buildDescription: v0.0.1
           rootPath: build
           depot1Path: StandaloneWindows64

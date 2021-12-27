@@ -26,6 +26,9 @@ inputs:
     required: true
     default: ''
     description: 'The app id within steam partner network.'
+  firstDepotIdOverride:
+    required: false
+    description: 'An optional override to specify the ID of the first depot instead of using the app ID plus one.'
   buildDescription:
     required: false
     description: 'Description for this build.'
@@ -81,6 +84,7 @@ runs:
         ssfnFileName: ${{ inputs.ssfnFileName }}
         ssfnFileContents: ${{ inputs.ssfnFileContents }}
         appId: ${{ inputs.appId }}
+        firstDepotIdOverride: ${{ inputs.firstDepotIdOverride }}
         buildDescription: ${{ inputs.buildDescription }}
         rootPath: ${{ inputs.rootPath }}
         depot1Path: ${{ inputs.depot1Path }}
