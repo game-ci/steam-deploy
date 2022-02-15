@@ -110,6 +110,10 @@ Note that the `default` branch [has been observed to not work](https://github.co
 
 ## Other Notes
 
+#### Environment Support
+
+steam-deploy only supports `ubuntu` environments. It will not work on `macos` or `windows` environments.
+
 #### Excluded Files / Folders
 
 Certain file or folder patterns are excluded from the upload to Steam as they're unsafe to ship to players:
