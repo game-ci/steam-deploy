@@ -112,7 +112,7 @@ Note that the `default` branch [has been observed to not work](https://github.co
 
 #### Environment Support
 
-steam-deploy only supports `ubuntu` environments. It will not work on `macos` or `windows` environments.
+steam-deploy only supports `ubuntu` environments. It will not work in `macos` or `windows` environments.
 
 #### Excluded Files / Folders
 
