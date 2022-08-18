@@ -94,7 +94,7 @@ The relative path following your root path for the files to be included in this 
 
 If your appId is 125000 then the depots 125001 ... 125009 will be assumed.
 
-#### firstDepotId
+#### firstDepotIdOverride
 
 You can use this to override the ID of the first depot in case the IDs do not start as described in depot[X]Path (e.g. for DLCs).
 
