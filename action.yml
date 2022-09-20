@@ -75,7 +75,6 @@ runs:
     - id: setup-steamcmd
       uses: CyberAndrii/setup-steamcmd@v1.1.1
     - id: steam-deploy
-      if: runner.os != 'Windows'
       env:
         STEAM_HOME: ${{ steps.setup-steamcmd.outputs.directory }}
         STEAM_CMD: ${{ steps.setup-steamcmd.outputs.executable }}
@@ -99,36 +98,7 @@ runs:
         depot9Path: ${{ inputs.depot9Path }}
         releaseBranch: ${{ inputs.releaseBranch }}
       run: |
-        chmod +x ${{ github.action_path }}/steam_deploy.sh
-        ${{ github.action_path }}/steam_deploy.sh
+        chmod +x $GITHUB_ACTION_PATH/steam_deploy.sh
+        $GITHUB_ACTION_PATH/steam_deploy.sh
         echo "::set-output name=manifest::$(pwd)/manifest.vdf"
-      shell: bash
-    - id: steam-deploy-win
-      if: runner.os == 'Windows'
-      env:
-        STEAM_HOME: ${{ steps.setup-steamcmd.outputs.directory }}
-        STEAM_CMD: ${{ steps.setup-steamcmd.outputs.executable }}
-        username: ${{ inputs.username }}
-        password: ${{ inputs.password }}
-        configVdf: ${{ inputs.configVdf }}
-        ssfnFileName: ${{ inputs.ssfnFileName }}
-        ssfnFileContents: ${{ inputs.ssfnFileContents }}
-        appId: ${{ inputs.appId }}
-        firstDepotIdOverride: ${{ inputs.firstDepotIdOverride }}
-        buildDescription: ${{ inputs.buildDescription }}
-        rootPath: ${{ inputs.rootPath }}
-        depot1Path: ${{ inputs.depot1Path }}
-        depot2Path: ${{ inputs.depot2Path }}
-        depot3Path: ${{ inputs.depot3Path }}
-        depot4Path: ${{ inputs.depot4Path }}
-        depot5Path: ${{ inputs.depot5Path }}
-        depot6Path: ${{ inputs.depot6Path }}
-        depot7Path: ${{ inputs.depot7Path }}
-        depot8Path: ${{ inputs.depot8Path }}
-        depot9Path: ${{ inputs.depot9Path }}
-        releaseBranch: ${{ inputs.releaseBranch }}
-      run: |
-        chmod +x ${{ github.action_path }}\steam_deploy.sh
-        ${{ github.action_path }}\steam_deploy.sh
-        echo "::set-output name=manifest::$(pwd)\manifest.vdf"
       shell: bash
