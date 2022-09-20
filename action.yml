@@ -99,6 +99,6 @@ runs:
         releaseBranch: ${{ inputs.releaseBranch }}
       run: |
         chmod +x ${{ github.action_path }}/steam_deploy.sh
-        ${{ github.action_path }}/steam_deploy.sh
+        bash ${{ github.action_path }}/steam_deploy.sh
         echo "::set-output name=manifest::$(pwd)/manifest.vdf"
       shell: bash
