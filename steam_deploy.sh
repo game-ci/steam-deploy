@@ -56,13 +56,23 @@ echo ""
 
 mkdir BuildOutput
 
+steamdir=$STEAM_HOME
+manifest_path=$(pwd)/manifest.vdf
+contentroot=$(pwd)/$rootPath
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  steamdir="$HOME/Library/Application Support/Steam"
+elif [[ "$OSTYPE" == "msys"* ]]; then
+  manifest_path=$(cygpath -w "$manifest_path")
+  contentroot=$(cygpath -w "$contentroot")
+fi
+
 cat << EOF > "manifest.vdf"
 "appbuild"
 {
   "appid" "$appId"
   "desc" "$buildDescription"
   "buildoutput" "BuildOutput"
-  "contentroot" "$(pwd)/$rootPath"
+  "contentroot" "$contentroot"
   "setlive" "$releaseBranch"
 
   "depots"
@@ -70,14 +80,6 @@ cat << EOF > "manifest.vdf"
 /g')}
 }
 EOF
-
-steamdir=$STEAM_HOME
-manifest_path=$(pwd)/manifest.vdf
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  steamdir="$HOME/Library/Application Support/Steam"
-elif [[ "$OSTYPE" == "msys"* ]]; then
-  manifest_path=$(cygpath -w "$manifest_path")
-fi
 
 cat manifest.vdf
 echo ""
