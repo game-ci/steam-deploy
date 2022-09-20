@@ -103,7 +103,7 @@ runs:
         ${{ github.action_path }}/steam_deploy.sh
         echo "::set-output name=manifest::$(pwd)/manifest.vdf"
       shell: bash
-    - id: steam-deploy
+    - id: steam-deploy-win
       if: runner.os == 'Windows'
       env:
         STEAM_HOME: ${{ steps.setup-steamcmd.outputs.directory }}
