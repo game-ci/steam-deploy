@@ -78,8 +78,8 @@ runs:
       env:
         STEAM_HOME: ${{ steps.setup-steamcmd.outputs.directory }}
         STEAM_CMD: ${{ steps.setup-steamcmd.outputs.executable }}
-        username: ${{ inputs.username }}
-        password: ${{ inputs.password }}
+        steam_username: ${{ inputs.username }}
+        steam_password: ${{ inputs.password }}
         configVdf: ${{ inputs.configVdf }}
         ssfnFileName: ${{ inputs.ssfnFileName }}
         ssfnFileContents: ${{ inputs.ssfnFileContents }}

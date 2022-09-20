@@ -107,7 +107,7 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-$STEAM_CMD +login "$username" "$password" +run_app_build $(pwd)/manifest.vdf +quit || (
+$STEAM_CMD +login "$steam_username" "$steam_password" +run_app_build $(pwd)/manifest.vdf +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
