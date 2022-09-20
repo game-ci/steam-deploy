@@ -72,9 +72,9 @@ cat << EOF > "manifest.vdf"
 EOF
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  steamdir = "~/Library/Application Support/Steam"
+  steamdir="~/Library/Application Support/Steam"
 else
-  steamdir = $STEAM_HOME
+  steamdir=$STEAM_HOME
 fi
 
 cat manifest.vdf
