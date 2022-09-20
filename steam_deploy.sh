@@ -1,3 +1,5 @@
+#!/bin/sh
+
 echo ""
 echo "#################################"
 echo "#   Generating Depot Manifests  #"
