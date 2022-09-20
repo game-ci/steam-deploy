@@ -89,23 +89,14 @@ echo ""
 echo "Steam is installed in: $steamdir"
 
 mkdir -p "$steamdir/config"
-# mkdir -p "/home/runner/Steam/config"
 
 echo "Copying $steamdir/config/config.vdf..."
-echo "$configVdf" > "$steamdir/config/config.vdf"
+echo "$configVdf" | base64 -d > "$steamdir/config/config.vdf"
 chmod 777 "$steamdir/config/config.vdf"
-
-# echo "Copying /home/runner/Steam/config/config.vdf..."
-# echo "$configVdf" > "/home/runner/Steam/config/config.vdf"
-# chmod 777 "/home/runner/Steam/config/config.vdf"
 
 echo "Copying $steamdir/ssfn..."
 echo "$ssfnFileContents" | base64 -d > "$steamdir/$ssfnFileName"
 chmod 777 "$steamdir/$ssfnFileName"
-
-# echo "Copying /home/runner/Steam/ssfn..."
-# echo "$ssfnFileContents" | base64 -d > "/home/runner/Steam/$ssfnFileName"
-# chmod 777 "/home/runner/Steam/$ssfnFileName"
 
 echo "Finished Copying SteamGuard Files!"
 echo ""
