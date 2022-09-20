@@ -71,6 +71,12 @@ cat << EOF > "manifest.vdf"
 }
 EOF
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  $steamdir = "~/Library/Application Support/Steam"
+else
+  $steamdir = $STEAM_HOME
+fi
+
 cat manifest.vdf
 echo ""
 
@@ -80,20 +86,20 @@ echo "#    Copying SteamGuard Files   #"
 echo "#################################"
 echo ""
 
-mkdir -p "$STEAM_HOME/config"
+mkdir -p "$steamdir/config"
 mkdir -p "/home/runner/Steam/config"
 
-echo "Copying $STEAM_HOME/config/config.vdf..."
-echo "$configVdf" > "$STEAM_HOME/config/config.vdf"
-chmod 777 "$STEAM_HOME/config/config.vdf"
+echo "Copying $steamdir/config/config.vdf..."
+echo "$configVdf" > "$steamdir/config/config.vdf"
+chmod 777 "$steamdir/config/config.vdf"
 
 echo "Copying /home/runner/Steam/config/config.vdf..."
 echo "$configVdf" > "/home/runner/Steam/config/config.vdf"
 chmod 777 "/home/runner/Steam/config/config.vdf"
 
-echo "Copying $STEAM_HOME/ssfn..."
-echo "$ssfnFileContents" | base64 -d > "$STEAM_HOME/$ssfnFileName"
-chmod 777 "$STEAM_HOME/$ssfnFileName"
+echo "Copying $steamdir/ssfn..."
+echo "$ssfnFileContents" | base64 -d > "$steamdir/$ssfnFileName"
+chmod 777 "$steamdir/$ssfnFileName"
 
 echo "Copying /home/runner/Steam/ssfn..."
 echo "$ssfnFileContents" | base64 -d > "/home/runner/Steam/$ssfnFileName"
