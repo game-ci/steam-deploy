@@ -71,10 +71,12 @@ cat << EOF > "manifest.vdf"
 }
 EOF
 
+steamdir=$STEAM_HOME
+manifest_path=$(pwd)/manifest.vdf
 if [[ "$OSTYPE" == "darwin"* ]]; then
   steamdir="$HOME/Library/Application Support/Steam"
-else
-  steamdir=$STEAM_HOME
+elif [[ "$OSTYPE" == "msys"* ]]; then
+  manifest_path=$(cygpath -w "$manifest_path")
 fi
 
 cat manifest.vdf
@@ -107,7 +109,7 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-$STEAM_CMD +login "$steam_username" "$steam_password" +run_app_build $(pwd)/manifest.vdf +quit || (
+$STEAM_CMD +login "$steam_username" "$steam_password" +run_app_build $manifest_path +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
