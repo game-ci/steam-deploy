@@ -64,6 +64,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif [[ "$OSTYPE" == "msys"* ]]; then
   manifest_path=$(cygpath -w "$manifest_path")
   contentroot=$(cygpath -w "$contentroot")
+elif [ "$RUNNER_OS" == "Linux" ] then
+  steamdir="/home/runner/Steam"
 fi
 
 cat << EOF > "manifest.vdf"
