@@ -54,7 +54,7 @@ echo "#    Generating App Manifest    #"
 echo "#################################"
 echo ""
 
-mkdir BuildOutput
+mkdir -p BuildOutput
 
 steamdir=$STEAM_HOME
 manifest_path=$(pwd)/manifest.vdf
