@@ -59,9 +59,9 @@ mkdir -p BuildOutput
 steamdir=$STEAM_HOME
 manifest_path=$(pwd)/manifest.vdf
 contentroot=$(pwd)/$rootPath
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if [[ "$OSTYPE" = "darwin"* ]]; then
   steamdir="$HOME/Library/Application Support/Steam"
-elif [[ "$OSTYPE" == "msys"* ]]; then
+elif [[ "$OSTYPE" = "msys"* ]]; then
   manifest_path=$(cygpath -w "$manifest_path")
   contentroot=$(cygpath -w "$contentroot")
 elif [ "$RUNNER_OS" = "Linux" ]; then
