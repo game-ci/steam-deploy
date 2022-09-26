@@ -54,7 +54,19 @@ echo "#    Generating App Manifest    #"
 echo "#################################"
 echo ""
 
-mkdir BuildOutput
+mkdir -p BuildOutput
+
+steamdir=$STEAM_HOME
+manifest_path=$(pwd)/manifest.vdf
+contentroot=$(pwd)/$rootPath
+if [[ "$OSTYPE" = "darwin"* ]]; then
+  steamdir="$HOME/Library/Application Support/Steam"
+elif [[ "$OSTYPE" = "msys"* ]]; then
+  manifest_path=$(cygpath -w "$manifest_path")
+  contentroot=$(cygpath -w "$contentroot")
+elif [ "$RUNNER_OS" = "Linux" ]; then
+  steamdir="/home/runner/Steam"
+fi
 
 cat << EOF > "manifest.vdf"
 "appbuild"
@@ -62,7 +74,7 @@ cat << EOF > "manifest.vdf"
   "appid" "$appId"
   "desc" "$buildDescription"
   "buildoutput" "BuildOutput"
-  "contentroot" "$(pwd)/$rootPath"
+  "contentroot" "$contentroot"
   "setlive" "$releaseBranch"
 
   "depots"
@@ -80,24 +92,17 @@ echo "#    Copying SteamGuard Files   #"
 echo "#################################"
 echo ""
 
-mkdir -p "$STEAM_HOME/config"
-mkdir -p "/home/runner/Steam/config"
+echo "Steam is installed in: $steamdir"
 
-echo "Copying $STEAM_HOME/config/config.vdf..."
-echo "$configVdf" > "$STEAM_HOME/config/config.vdf"
-chmod 777 "$STEAM_HOME/config/config.vdf"
+mkdir -p "$steamdir/config"
 
-echo "Copying /home/runner/Steam/config/config.vdf..."
-echo "$configVdf" > "/home/runner/Steam/config/config.vdf"
-chmod 777 "/home/runner/Steam/config/config.vdf"
+echo "Copying $steamdir/config/config.vdf..."
+echo "$configVdf" | base64 -d > "$steamdir/config/config.vdf"
+chmod 777 "$steamdir/config/config.vdf"
 
-echo "Copying $STEAM_HOME/ssfn..."
-echo "$ssfnFileContents" | base64 -d > "$STEAM_HOME/$ssfnFileName"
-chmod 777 "$STEAM_HOME/$ssfnFileName"
-
-echo "Copying /home/runner/Steam/ssfn..."
-echo "$ssfnFileContents" | base64 -d > "/home/runner/Steam/$ssfnFileName"
-chmod 777 "/home/runner/Steam/$ssfnFileName"
+echo "Copying $steamdir/ssfn..."
+echo "$ssfnFileContents" | base64 -d > "$steamdir/$ssfnFileName"
+chmod 777 "$steamdir/$ssfnFileName"
 
 echo "Finished Copying SteamGuard Files!"
 echo ""
@@ -108,7 +113,7 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-$STEAM_CMD +login "$username" "$password" +run_app_build $(pwd)/manifest.vdf +quit || (
+$STEAM_CMD +login "$steam_username" "$steam_password" +run_app_build $manifest_path +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
@@ -122,15 +127,15 @@ $STEAM_CMD +login "$username" "$password" +run_app_build $(pwd)/manifest.vdf +qu
     echo ""
     echo "Listing logs folder:"
     echo ""
-    ls -Ralph "/home/runner/Steam/logs/"
+    ls -Ralph "$steamdir/logs/"
     echo ""
     echo "Displaying error log"
     echo ""
-    cat "/home/runner/Steam/logs/stderr.txt"
+    cat "$steamdir/logs/stderr.txt"
     echo ""
     echo "Displaying bootstrapper log"
     echo ""
-    cat "/home/runner/Steam/logs/bootstrap_log.txt"
+    cat "$steamdir/logs/bootstrap_log.txt"
     echo ""
     echo "#################################"
     echo "#             Output            #"
