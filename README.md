@@ -69,9 +69,9 @@ However, it is possible to go through the MFA process only once by setting up Gi
 1. Try to login with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
 1. Validate that the MFA process is complete by running `steamcmd +login <username> <password> +quit` again. It should not ask for the MFA code again.
 1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Use `cat config/config.vdf | base64 > config_base64.txt` to encode the file. Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
-1. Find the SSFN file, depending on your platform. **Windows**: The `steamcmd` folder will also contain two files whose names look like `ssfn<numbers>`, **but one of them is a hidden file**. [Find the hidden one](https://support.microsoft.com/en-us/windows/view-hidden-files-and-folders-in-windows-97fbc472-c603-9d90-91d0-1166d1d9f4b5) and use that hidden file as the correct SSFN file for the following steps. **Linux**: The SSFN file will be in the `steamcmd` folder. **Mac**: The SSFN will be at `~/Library/Application\ Support/Steam/`.
+1. Find the SSFN file, depending on your platform. **Windows**: The `steamcmd` folder will also contain two files of which the names look like `ssfn<numbers>`. **One of them is a hidden file**. [Find that hidden file](https://support.microsoft.com/en-us/windows/view-hidden-files-and-folders-in-windows-97fbc472-c603-9d90-91d0-1166d1d9f4b5) and use that hidden file as the correct SSFN file for the following steps. **Linux**: The SSFN file will be in the `steamcmd` folder. **Mac**: The SSFN will be at `~/Library/Application\ Support/Steam/`.
 1. Copy the name of the SSFN file to a GitHub Secret `STEAM_SSFN_FILE_NAME`.
-1. Use `cat <ssfnFileName> | base64 > ssfn_base64.txt` to encode the contents of the SSFN file. Copy the contents of `ssfn_base64.txt` to a GitHub Secret `STEAM_SSFN_FILE_CONTENTS`.
+1. Use `cat <ssfnFileName> | base64 > ssfn_base64.txt` to encode the contents of the SSFN file. Copy the encoded contents inside `ssfn_base64.txt` to a GitHub Secret called `STEAM_SSFN_FILE_CONTENTS`.
 
 #### appId
 
