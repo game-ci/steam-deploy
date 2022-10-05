@@ -30,6 +30,8 @@ In order to configure this action, configure a step that looks like the followin
 
 _(The parameters are explained below)_
 
+Option A. Using MFA files
+
 ```yaml
 jobs:
   deployToSteam:
@@ -50,6 +52,31 @@ jobs:
           releaseBranch: prerelease
 ```
 
+Option B. Using TOTP
+
+```yaml
+jobs:
+  deployToSteam:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CyberAndrii/steam-totp@v1
+        name: Generate TOTP
+        id: steam-totp
+        with:
+          shared_secret: ${{ secrets.STEAM_SHARED_SECRET }}
+      - uses: game-ci/steam-deploy@v1
+        with:
+          username: ${{ secrets.STEAM_USERNAME }}
+          password: ${{ secrets.STEAM_PASSWORD }}
+          totp: ${{ steps.steam-totp.outputs.code }}
+          appId: 1234560
+          buildDescription: v1.2.3
+          rootPath: build
+          depot1Path: StandaloneWindows64
+          depot2Path: StandaloneLinux64
+          releaseBranch: prerelease
+```
+
 ## Configuration
 
 #### username
@@ -60,9 +87,13 @@ The username of the Steam Build Account that you created in setup step 1.
 
 The password of the Steam Build Account that you created in setup step 1.
 
+#### totp
+
+Deploying to Steam using TOTP. If this is not passed, `configVdf`, `ssfnFileName`, and `ssfnFileContents` are required.
+
 #### configVdf, ssfnFileName, and ssfnFileContents
 
-Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard. 
+Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard unless `totp` is passed.
 This means that simply using username and password isn't enough to authenticate with Steam. 
 However, it is possible to go through the MFA process only once by setting up GitHub Secrets for configVdf, ssfnFileName, and ssfnFileContents with these steps:
 1. Install [Valve's offical steamcmd](https://partner.steamgames.com/doc/sdk/uploading#1) on your local machine. All following steps will also be done on your local machine.
