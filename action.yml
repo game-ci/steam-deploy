@@ -10,18 +10,18 @@ inputs:
     required: true
     default: ''
     description: 'The password of your builder account.'
+  totp:
+    required: false
+    description: 'The TOTP to use for login. If set, `configVdf`, `ssfnFileName`, and `ssfnFileContents` will be ignored.'
   configVdf:
-    required: true
-    default: ''
-    description: 'The contents of STEAM_HOME/config/config.vdf.'
+    required: false
+    description: 'The contents of STEAM_HOME/config/config.vdf. Required if `totp` is not set.'
   ssfnFileName:
-    required: true
-    default: ''
-    description: 'The basename of the STEAM_HOME/ssfn file.'
+    required: false
+    description: 'The basename of the STEAM_HOME/ssfn file. Required if `totp` is not set.'
   ssfnFileContents:
-    required: true
-    default: ''
-    description: 'The contents of the file at STEAM_HOME/ssfnFileName.'
+    required: false
+    description: 'The contents of the file at STEAM_HOME/ssfnFileName. Required if `totp` is not set.'
   appId:
     required: true
     default: ''
@@ -80,6 +80,7 @@ runs:
         STEAM_CMD: ${{ steps.setup-steamcmd.outputs.executable }}
         steam_username: ${{ inputs.username }}
         steam_password: ${{ inputs.password }}
+        steam_totp: ${{ inputs.totp }}
         configVdf: ${{ inputs.configVdf }}
         ssfnFileName: ${{ inputs.ssfnFileName }}
         ssfnFileContents: ${{ inputs.ssfnFileContents }}
