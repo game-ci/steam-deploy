@@ -73,7 +73,7 @@ runs:
   using: "composite"
   steps:
     - id: setup-steamcmd
-      uses: CyberAndrii/setup-steamcmd@v1.1.1
+      uses: CyberAndrii/setup-steamcmd@v1
     - id: steam-deploy
       env:
         STEAM_HOME: ${{ steps.setup-steamcmd.outputs.directory }}
