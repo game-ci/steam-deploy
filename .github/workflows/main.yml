@@ -16,7 +16,7 @@ jobs:
         env:
           STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
         if: env.STEAM_USERNAME != ''
-        run: echo "::set-output name=usernameExists::true"
+        run: echo "usernameExists=true" >> $GITHUB_OUTPUT
 
   testDeploy:
     name: Deploy to Steam ☁
