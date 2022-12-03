@@ -101,5 +101,5 @@ runs:
       run: |
         chmod +x $GITHUB_ACTION_PATH/steam_deploy.sh
         $GITHUB_ACTION_PATH/steam_deploy.sh
-        echo "::set-output name=manifest::$(pwd)/manifest.vdf"
+        echo "manifest=$(pwd)/manifest.vdf" >> $GITHUB_OUTPUT
       shell: bash
