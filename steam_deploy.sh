@@ -1,4 +1,14 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+steamdir=${STEAM_HOME:-$HOME/Steam}
+# this is relative to the action
+contentroot=$(pwd)/$rootPath
+
+# these are temporary file we create, so in a tmpdir
+mkdir BuildOutput
+manifest_path=$(pwd)/manifest.vdf
 
 echo ""
 echo "#################################"
@@ -54,20 +64,6 @@ echo "#    Generating App Manifest    #"
 echo "#################################"
 echo ""
 
-mkdir -p BuildOutput
-
-steamdir=$STEAM_HOME
-manifest_path=$(pwd)/manifest.vdf
-contentroot=$(pwd)/$rootPath
-if [[ "$OSTYPE" = "darwin"* ]]; then
-  steamdir="$HOME/Library/Application Support/Steam"
-elif [[ "$OSTYPE" = "msys"* ]]; then
-  manifest_path=$(cygpath -w "$manifest_path")
-  contentroot=$(cygpath -w "$contentroot")
-elif [ "$RUNNER_OS" = "Linux" ]; then
-  steamdir="/home/runner/Steam"
-fi
-
 cat << EOF > "manifest.vdf"
 "appbuild"
 {
@@ -98,6 +94,8 @@ else
     exit 1
   fi
 
+  steam_totp="INVALID"
+
   echo ""
   echo "#################################"
   echo "#    Copying SteamGuard Files   #"
@@ -122,11 +120,37 @@ fi
 
 echo ""
 echo "#################################"
+echo "#        Test login             #"
+echo "#################################"
+echo ""
+
+$STEAM_CMD +set_steam_guard_code "$steam_totp" +login "$steam_username" "$steam_password" +quit;
+
+ret=$?
+if [ $ret -eq 0 ]; then
+    echo ""
+    echo "#################################"
+    echo "#        Successful login       #"
+    echo "#################################"
+    echo ""
+else
+      echo ""
+      echo "#################################"
+      echo "#        FAILED login           #"
+      echo "#################################"
+      echo ""
+      echo "Exit code: $ret"
+
+      exit $ret
+fi
+
+echo ""
+echo "#################################"
 echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-$STEAM_CMD +login "$steam_username" "$steam_password" "$steam_totp" +run_app_build $manifest_path +quit || (
+$STEAM_CMD +login "$steam_username" "$steam_password"  +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
@@ -136,11 +160,20 @@ $STEAM_CMD +login "$steam_username" "$steam_password" "$steam_totp" +run_app_bui
     echo ""
     ls -alh
     echo ""
-    ls -alh $rootPath
+    ls -alh "$rootPath" || true
     echo ""
     echo "Listing logs folder:"
     echo ""
     ls -Ralph "$steamdir/logs/"
+
+    for f in "$steamdir"/logs/*; do
+      if [ -e "$f" ]; then
+        echo "######## $f"
+        cat "$f"
+        echo
+      fi
+    done
+
     echo ""
     echo "Displaying error log"
     echo ""
@@ -155,5 +188,14 @@ $STEAM_CMD +login "$steam_username" "$steam_password" "$steam_totp" +run_app_bui
     echo "#################################"
     echo ""
     ls -Ralph BuildOutput
+
+    for f in BuildOutput/*.log; do
+      echo "######## $f"
+      cat "$f"
+      echo
+    done
+
     exit 1
   )
+
+echo "manifest=${manifest_path}" >> $GITHUB_OUTPUT
