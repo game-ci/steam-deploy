@@ -198,4 +198,4 @@ $STEAM_CMD +login "$steam_username" "$steam_password"  +quit || (
     exit 1
   )
 
-echo "::set-output name=manifest::$manifest_path"
+echo "manifest=${manifest_path}" >> $GITHUB_OUTPUT
