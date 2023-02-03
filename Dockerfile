@@ -1,10 +1,3 @@
-FROM cm2network/steamcmd
-
-ENV STEAM_CMD="$STEAMCMDDIR/steamcmd.sh"
-
-ADD *.sh $STEAMCMDDIR
-
-USER root
-RUN chown -vfR root:root $STEAMCMDDIR
-
-CMD "$STEAMCMDDIR/steam_deploy.sh"
+FROM steamcmd/steamcmd:latest
+COPY steam_deploy.sh /root/steam_deploy.sh
+ENTRYPOINT ["/root/steam_deploy.sh"]
