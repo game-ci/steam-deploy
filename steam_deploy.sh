@@ -150,7 +150,7 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-$STEAM_CMD +login "$steam_username" "$steam_password"  +quit || (
+$STEAM_CMD +run_app_build $manifest_path +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
