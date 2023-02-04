@@ -37,7 +37,7 @@ jobs:
   deployToSteam:
     runs-on: ubuntu-latest
     steps:
-      - uses: game-ci/steam-deploy@v1
+      - uses: game-ci/steam-deploy@v2
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
@@ -64,7 +64,7 @@ jobs:
         id: steam-totp
         with:
           shared_secret: ${{ secrets.STEAM_SHARED_SECRET }}
-      - uses: game-ci/steam-deploy@v1
+      - uses: game-ci/steam-deploy@v2
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
