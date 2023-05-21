@@ -39,11 +39,8 @@ jobs:
     steps:
       - uses: game-ci/steam-deploy@v2
         with:
-          username: ${{ secrets.STEAM_USERNAME }}
-          password: ${{ secrets.STEAM_PASSWORD }}
-          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
-          ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
-          ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
+          username: ${{ secrets.STEAM_USERNAME }}          
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}          
           appId: 1234560
           buildDescription: v1.2.3
           rootPath: build
@@ -66,8 +63,7 @@ jobs:
           shared_secret: ${{ secrets.STEAM_SHARED_SECRET }}
       - uses: game-ci/steam-deploy@v2
         with:
-          username: ${{ secrets.STEAM_USERNAME }}
-          password: ${{ secrets.STEAM_PASSWORD }}
+          username: ${{ secrets.STEAM_USERNAME }}          
           totp: ${{ steps.steam-totp.outputs.code }}
           appId: 1234560
           buildDescription: v1.2.3
@@ -82,10 +78,6 @@ jobs:
 #### username
 
 The username of the Steam Build Account that you created in setup step 1.
-
-#### password
-
-The password of the Steam Build Account that you created in setup step 1.
 
 #### totp
 
