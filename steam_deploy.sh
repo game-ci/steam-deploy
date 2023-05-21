@@ -128,7 +128,8 @@ echo "#        Test login             #"
 echo "#################################"
 echo ""
 
-steamcmd +set_steam_guard_code "$steam_totp" +login "$steam_username" "$steam_password" +quit;
+#steamcmd +set_steam_guard_code "$steam_totp" +login "$steam_username" "$steam_password" +quit;
+steamcmd +set_steam_guard_code "$steam_totp" +login "$steam_username" +quit;
 
 ret=$?
 if [ $ret -eq 0 ]; then
@@ -154,7 +155,8 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-steamcmd +login "$steam_username" "$steam_password" +run_app_build "$manifest_path" +quit || (
+#steamcmd +login "$steam_username" "$steam_password" +run_app_build "$manifest_path" +quit || (
+steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
