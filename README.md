@@ -37,7 +37,7 @@ jobs:
   deployToSteam:
     runs-on: ubuntu-latest
     steps:
-      - uses: game-ci/steam-deploy@v2
+      - uses: game-ci/steam-deploy@v3
         with:
           username: ${{ secrets.STEAM_USERNAME }}          
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}          
@@ -61,7 +61,7 @@ jobs:
         id: steam-totp
         with:
           shared_secret: ${{ secrets.STEAM_SHARED_SECRET }}
-      - uses: game-ci/steam-deploy@v2
+      - uses: game-ci/steam-deploy@v3
         with:
           username: ${{ secrets.STEAM_USERNAME }}          
           totp: ${{ steps.steam-totp.outputs.code }}
@@ -87,7 +87,7 @@ Deploying to Steam using TOTP. If this is not passed, `configVdf` is required.
 
 Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard unless `totp` is passed.
 This means that simply using username and password isn't enough to authenticate with Steam. 
-However, it is possible to go through the MFA process only once by setting up GitHub Secrets for configVdf with these steps:
+However, it is possible to go through the MFA process only once by setting up GitHub Secrets for `configVdf` with these steps:
 1. Install [Valve's offical steamcmd](https://partner.steamgames.com/doc/sdk/uploading#1) on your local machine. All following steps will also be done on your local machine.
 1. Try to login with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
 1. Validate that the MFA process is complete by running `steamcmd +login <username> +quit` again. It should not ask for the MFA code again.
