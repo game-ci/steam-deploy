@@ -5,13 +5,13 @@ inputs:
   username:
     required: true
     default: ''
-    description: 'The username of your builder account.'  
+    description: 'The username of your builder account.'
   totp:
     required: false
-    description: 'The TOTP to use for login. If set, `configVdf`, `ssfnFileName`, and `ssfnFileContents` will be ignored.'
+    description: 'The TOTP to use for login. If set, `configVdf` will be ignored.'
   configVdf:
     required: false
-    description: 'The contents of STEAM_HOME/config/config.vdf. Required if `totp` is not set.'  
+    description: 'The contents of STEAM_HOME/config/config.vdf. Required if `totp` is not set.'
   appId:
     required: true
     default: ''
@@ -63,11 +63,8 @@ runs:
   image: Dockerfile
   env:
     steam_username: ${{ inputs.username }}
-    steam_password: ${{ inputs.password }}
     steam_totp: ${{ inputs.totp }}
     configVdf: ${{ inputs.configVdf }}
-    ssfnFileName: ${{ inputs.ssfnFileName }}
-    ssfnFileContents: ${{ inputs.ssfnFileContents }}
     appId: ${{ inputs.appId }}
     firstDepotIdOverride: ${{ inputs.firstDepotIdOverride }}
     buildDescription: ${{ inputs.buildDescription }}
