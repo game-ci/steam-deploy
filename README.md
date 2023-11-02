@@ -12,7 +12,8 @@ This action assumes you are registered as a [partner](https://partner.steamgames
 
 #### 1. Create a Steam Build Account
 
-Create a specialised builder account that only has access to `Edit App Metadata` and `Publish App Changes To Steam`.
+Create a specialised builder account that only has access to `Edit App Metadata` and `Publish App Changes To Steam`,
+and permissions to edit your specific app.
 
 https://partner.steamgames.com/doc/sdk/uploading#Build_Account
 
