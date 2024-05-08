@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-steamdir=${STEAM_HOME:-$HOME/.steam/root}
+steamdir=${STEAM_HOME:-$HOME/Steam}
 # this is relative to the action
 contentroot=$(pwd)/$rootPath
 
