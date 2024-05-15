@@ -46,6 +46,7 @@ jobs:
           buildDescription: v1.2.3
           rootPath: build
           depot1Path: StandaloneWindows64
+          depot1InstallScriptPath: StandaloneWindows64/install_script.vdf
           depot2Path: StandaloneLinux64
           releaseBranch: prerelease
 ```
