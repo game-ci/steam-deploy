@@ -27,14 +27,26 @@ i=1;
 export DEPOTS="\n  "
 until [ $i -gt 9 ]; do
   eval "currentDepotPath=\$depot${i}Path"
+  eval "currentDepotInstallScriptPath=\$depot${i}InstallScriptPath"
   if [ -n "$currentDepotPath" ]; then
     # depot1Path uses firstDepotId, depot2Path uses firstDepotId + 1, depot3Path uses firstDepotId + 2...
     currentDepot=$((firstDepotId + i - 1))
+
+    # If the depot has an install script, add it to the depot manifest
+    if [ -n "${currentDepotInstallScriptPath:-}" ]; then
+      echo ""
+      echo "Adding install script for depot ${currentDepot}..."
+      echo ""
+      installScriptDirective="\"InstallScript\" \"${currentDepotInstallScriptPath}\""
+    else
+      installScriptDirective=""
+    fi
 
     echo ""
     echo "Adding depot${currentDepot}.vdf ..."
     echo ""
     export DEPOTS="$DEPOTS  \"$currentDepot\" \"depot${currentDepot}.vdf\"\n  "
+
     cat << EOF > "depot${currentDepot}.vdf"
 "DepotBuildConfig"
 {
@@ -48,6 +60,8 @@ until [ $i -gt 9 ]; do
   "FileExclusion" "*.pdb"
   "FileExclusion" "**/*_BurstDebugInformation_DoNotShip*"
   "FileExclusion" "**/*_BackUpThisFolder_ButDontShipItWithYourGame*"
+
+  $installScriptDirective
 }
 EOF
 
@@ -88,7 +102,7 @@ if [ -n "$steam_totp" ]; then
   echo "#     Using SteamGuard TOTP     #"
   echo "#################################"
   echo ""
-else  
+else
   if [ ! -n "$configVdf" ]; then
     echo "Config VDF input is missing or incomplete! Cannot proceed."
     exit 1
