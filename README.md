@@ -94,7 +94,7 @@ However, it is possible to go through the MFA process only once by setting up Gi
 1. Try to login with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
 1. Validate that the MFA process is complete by running `steamcmd +login <username> +quit` again. It should not ask for the MFA code again.
 1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Use `cat config/config.vdf | base64 > config_base64.txt` to encode the file. Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
-   - macOS: `cat "~/Library/Application Support/Steam/config/config.vdf" | base64 > config_base64.txt`
+   - macOS: `cat ~/Library/Application\ Support/Steam/config/config.vdf | base64 > config_base64.txt`
 1. `If:` when running the action you recieve another MFA code via email, run `steamcmd +set_steam_guard_code <code>` on your local machine and repeat the `config.vdf` encoding and replace secret `STEAM_CONFIG_VDF` with its contents.
 
 #### appId
