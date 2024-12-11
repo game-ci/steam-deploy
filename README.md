@@ -96,6 +96,7 @@ However, it is possible to go through the MFA process only once by setting up Gi
 1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Use `cat config/config.vdf | base64 > config_base64.txt` to encode the file. Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
    - macOS: `cat ~/Library/Application\ Support/Steam/config/config.vdf | base64 > config_base64.txt`
 1. `If:` when running the action you recieve another MFA code via email, run `steamcmd +set_steam_guard_code <code>` on your local machine and repeat the `config.vdf` encoding and replace secret `STEAM_CONFIG_VDF` with its contents.
+2. If the action fails with `Logging in user ... to Steam Public...FAILED (License expired)`, then you need to regenerate your local VDF file with a new Steam guard code.
 
 #### appId
 
