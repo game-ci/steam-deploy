@@ -87,17 +87,21 @@ Deploying to Steam using TOTP. If this is not passed, `configVdf` is required.
 
 #### configVdf
 
-Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard unless `totp` is passed.
-This means that simply using username and password isn't enough to authenticate with Steam. 
-However, it is possible to go through the MFA process only once by setting up GitHub Secrets for `configVdf` with these steps:
-1. Install [Valve's offical steamcmd](https://partner.steamgames.com/doc/sdk/uploading#1) on your local machine. All following steps will also be done on your local machine.
-1. Try to login with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
-1. Validate that the MFA process is complete by running `steamcmd +login <username> +quit` again. It should not ask for the MFA code again.
-1. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Use `cat config/config.vdf | base64 > config_base64.txt` to encode the file. Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
-   - macOS: `cat ~/Library/Application\ Support/Steam/config/config.vdf | base64 > config_base64.txt`
-1. `If:` when running the action you recieve another MFA code via email, run `steamcmd +set_steam_guard_code <code>` on your local machine and repeat the `config.vdf` encoding and replace secret `STEAM_CONFIG_VDF` with its contents.
-2. If the action fails with `Logging in user ... to Steam Public...FAILED (License expired)`, then you need to regenerate your local VDF file with a new Steam guard code.
+Deploying to Steam requires using Multi-Factor Authentication (MFA) through Steam Guard unless `totp` is passed. This means that simply using username and password isn't enough to authenticate with Steam. However, it is possible to go through the MFA process only once by setting up GitHub Secrets for `configVdf` with these steps:
 
+1. Install [Valve's official steamcmd](https://partner.steamgames.com/doc/sdk/uploading#1) on your local machine. All following steps will also be done on your local machine.
+2. Try to log in with `steamcmd +login <username> <password> +quit`, which may prompt for the MFA code. If so, type in the MFA code that was emailed to your builder account's email address.
+3. Validate that the MFA process is complete by running `steamcmd +login <username> +quit` again. It should not ask for the MFA code again.
+4. The folder from which you run `steamcmd` will now contain an updated `config/config.vdf` file. Use `cat config/config.vdf | base64 > config_base64.txt` to encode the file. Copy the contents of `config_base64.txt` to a GitHub Secret `STEAM_CONFIG_VDF`.
+   - macOS: `cat ~/Library/Application\ Support/Steam/config/config.vdf | base64 > config_base64.txt`
+5. If when running the action you receive another MFA code via email, run `steamcmd +set_steam_guard_code <code>` on your local machine and repeat the `config.vdf` encoding, then replace the secret `STEAM_CONFIG_VDF` with its contents.
+6. If the action fails with `Logging in user ... to Steam Public...FAILED (License expired)`, follow these steps:
+   1. On your local machine, run `steamcmd +login <username>` to trigger a new Steam Guard code.
+   2. Enter the code sent to your email.
+   3. Generate a new `config.vdf` file using the steps above (starting from step 4).
+   4. Update your `STEAM_CONFIG_VDF` secret with the new encoded value.
+
+Feel free to ask if further refinements are needed!
 #### appId
 
 The identifier of your app on steam. You can find it on your [dashboard](https://partner.steamgames.com/dashboard).
