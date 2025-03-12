@@ -82,6 +82,10 @@ inputs:
   releaseBranch:
     required: false
     description: 'The branch within steam that this build will be automatically put live on.'
+  debugBranch:
+    required: false
+    description: 'If set to true, include debug symbols and directories in the upload'
+    default: false
 outputs:
   manifest:
     description: "The path to the generated manifest.vdf"
@@ -115,3 +119,4 @@ runs:
     depot9Path: ${{ inputs.depot9Path }}
     depot9InstallScriptPath: ${{ inputs.depot9InstallScriptPath }}
     releaseBranch: ${{ inputs.releaseBranch }}
+    debugBranch: ${{ inputs.debugBranch }}
