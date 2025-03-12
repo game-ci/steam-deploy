@@ -41,6 +41,11 @@ until [ $i -gt 9 ]; do
     else
       installScriptDirective=""
     fi
+    if [ "${debugBranch}" = "true" ]; then
+      debugExcludes=""
+    else
+      debugExcludes='"FileExclusion" "*.pdb"\n  "FileExclusion" "**/*_BurstDebugInformation_DoNotShip*"\n  "FileExclusion" "**/*_BackUpThisFolder_ButDontShipItWithYourGame*"'
+    fi
 
     echo ""
     echo "Adding depot${currentDepot}.vdf ..."
@@ -57,9 +62,8 @@ until [ $i -gt 9 ]; do
     "DepotPath" "."
     "recursive" "1"
   }
-  "FileExclusion" "*.pdb"
-  "FileExclusion" "**/*_BurstDebugInformation_DoNotShip*"
-  "FileExclusion" "**/*_BackUpThisFolder_ButDontShipItWithYourGame*"
+  $(echo "$debugExcludes" |sed 's/\\n/\
+/g')
 
   $installScriptDirective
 }
