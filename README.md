@@ -1,6 +1,6 @@
 # Steam Deploy
 
-[![Actions status](https://github.com/game-ci/steam-deploy/workflows/🚀/badge.svg?event=push&branch=main)](https://github.com/game-ci/steam-deploy/actions/workflows/main.yml)
+[![Actions status](https://github.com/game-ci/steam-deploy/workflows/🚀/badge.svg?branch=main)](https://github.com/game-ci/steam-deploy/actions/workflows/main.yml)
 
 Github Action to deploy a game to Steam
 
