@@ -164,7 +164,12 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit || (
+    steam_login_args="+login "$steam_username""
+    if [ "$steam_totp" != "INVALID" ]; then
+      steam_login_args="+set_steam_guard_code "$steam_totp" $steam_login_args"
+    fi
+
+    steamcmd $steam_login_args +run_app_build "$manifest_path" +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
