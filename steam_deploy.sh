@@ -165,7 +165,8 @@ echo "#################################"
 echo ""
 
 if [ "$steam_totp" != "INVALID" ]; then
-  steamcmd +set_steam_guard_code "$steam_totp" +login "$steam_username" +run_app_build "$manifest_path" +quit || (
+    echo "Using TOTP for login"
+    steamcmd +set_steam_guard_code "$steam_totp" +login "$steam_username" +run_app_build "$manifest_path" +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
@@ -213,6 +214,7 @@ if [ "$steam_totp" != "INVALID" ]; then
     exit 1
   )
 else
+    echo "Using standard login"
     steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit || (
     echo ""
     echo "#################################"
