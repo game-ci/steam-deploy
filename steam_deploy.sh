@@ -164,12 +164,8 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-    steam_login_args="+login "$steam_username""
-    if [ "$steam_totp" != "INVALID" ]; then
-      steam_login_args="+set_steam_guard_code "$steam_totp" $steam_login_args"
-    fi
-
-    steamcmd $steam_login_args +run_app_build "$manifest_path" +quit || (
+if [ "$steam_totp" != "INVALID" ]; then
+  steamcmd +set_steam_guard_code "$steam_totp" +login "$steam_username" +run_app_build "$manifest_path" +quit || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
@@ -216,5 +212,54 @@ echo ""
 
     exit 1
   )
+else
+    steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit || (
+    echo ""
+    echo "#################################"
+    echo "#             Errors            #"
+    echo "#################################"
+    echo ""
+    echo "Listing current folder and rootpath"
+    echo ""
+    ls -alh
+    echo ""
+    ls -alh "$rootPath" || true
+    echo ""
+    echo "Listing logs folder:"
+    echo ""
+    ls -Ralph "$steamdir/logs/"
+
+    for f in "$steamdir"/logs/*; do
+      if [ -e "$f" ]; then
+        echo "######## $f"
+        cat "$f"
+        echo
+      fi
+    done
+
+    echo ""
+    echo "Displaying error log"
+    echo ""
+    cat "$steamdir/logs/stderr.txt"
+    echo ""
+    echo "Displaying bootstrapper log"
+    echo ""
+    cat "$steamdir/logs/bootstrap_log.txt"
+    echo ""
+    echo "#################################"
+    echo "#             Output            #"
+    echo "#################################"
+    echo ""
+    ls -Ralph BuildOutput
+
+    for f in BuildOutput/*.log; do
+      echo "######## $f"
+      cat "$f"
+      echo
+    done
+
+    exit 1
+  )
+fi
 
 echo "manifest=${manifest_path}" >> $GITHUB_OUTPUT
