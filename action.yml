@@ -6,6 +6,9 @@ inputs:
     required: true
     default: ''
     description: 'The username of your builder account.'
+  password:
+    required: false
+    description: 'The password of your builder account. Required if `totp` is set.'
   totp:
     required: false
     description: 'The TOTP to use for login. If set, `configVdf` will be ignored.'
@@ -94,6 +97,7 @@ runs:
   image: Dockerfile
   env:
     steam_username: ${{ inputs.username }}
+    steam_password: ${{ inputs.password }}
     steam_totp: ${{ inputs.totp }}
     configVdf: ${{ inputs.configVdf }}
     appId: ${{ inputs.appId }}
