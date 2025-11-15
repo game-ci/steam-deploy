@@ -81,6 +81,10 @@ jobs:
 
 The username of the Steam Build Account that you created in setup step 1.
 
+#### password
+
+The password of the Steam Build Account. Both this and `totp` are required together, see below.
+
 #### totp
 
 Deploying to Steam using TOTP. If this is not passed, `configVdf` is required.
