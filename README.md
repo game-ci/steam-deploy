@@ -65,7 +65,8 @@ jobs:
           shared_secret: ${{ secrets.STEAM_SHARED_SECRET }}
       - uses: game-ci/steam-deploy@v3
         with:
-          username: ${{ secrets.STEAM_USERNAME }}          
+          username: ${{ secrets.STEAM_USERNAME }}
+          password: ${{ secrets.STEAM_PASSWORD }}
           totp: ${{ steps.steam-totp.outputs.code }}
           appId: 1234560
           buildDescription: v1.2.3
