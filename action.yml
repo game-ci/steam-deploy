@@ -92,6 +92,8 @@ inputs:
 outputs:
   manifest:
     description: "The path to the generated manifest.vdf"
+  buildId:
+    description: "The Steam BuildID of the uploaded build"
 runs:
   using: "docker"
   image: Dockerfile
