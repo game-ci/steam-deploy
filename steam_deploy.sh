@@ -164,7 +164,7 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit || (
+steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit | tee build_output.log || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
@@ -212,4 +212,7 @@ steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit || (
     exit 1
   )
 
+buildId=$(grep -oP '\(BuildID \K\d+(?=\))' build_output.log || echo "")
+
 echo "manifest=${manifest_path}" >> $GITHUB_OUTPUT
+echo "buildId=${buildId}" >> $GITHUB_OUTPUT
