@@ -6,9 +6,17 @@ steamdir=${STEAM_HOME:-$HOME/Steam}
 # this is relative to the action
 contentroot=$(pwd)/$rootPath
 
-# these are temporary file we create, so in a tmpdir
-mkdir BuildOutput
-manifest_path=$(pwd)/manifest.vdf
+# these are temporary files we create, so in a tmpdir outside of the workspace: this way the
+# action can run more than once per job, and it leaves nothing root-owned behind for the next
+# checkout to trip over
+workdir=$(mktemp -d "${RUNNER_TEMP:-/tmp}/steam-deploy.XXXXXX")
+buildoutput=$workdir/BuildOutput
+manifest_path=$workdir/manifest.vdf
+mkdir -p "$buildoutput"
+
+# hand everything we created back to whoever owns the workspace (the runner user), so that
+# self-hosted runners can clean it up without sudo
+trap 'chown -R --reference="${GITHUB_WORKSPACE:-$(pwd)}" "$workdir" 2>/dev/null || true' EXIT
 
 echo ""
 echo "#################################"
@@ -50,9 +58,9 @@ until [ $i -gt 9 ]; do
     echo ""
     echo "Adding depot${currentDepot}.vdf ..."
     echo ""
-    export DEPOTS="$DEPOTS  \"$currentDepot\" \"depot${currentDepot}.vdf\"\n  "
+    export DEPOTS="$DEPOTS  \"$currentDepot\" \"$workdir/depot${currentDepot}.vdf\"\n  "
 
-    cat << EOF > "depot${currentDepot}.vdf"
+    cat << EOF > "$workdir/depot${currentDepot}.vdf"
 "DepotBuildConfig"
 {
   "DepotID" "$currentDepot"
@@ -69,7 +77,7 @@ until [ $i -gt 9 ]; do
 }
 EOF
 
-  cat depot${currentDepot}.vdf
+  cat "$workdir/depot${currentDepot}.vdf"
   echo ""
   fi;
 
@@ -82,12 +90,12 @@ echo "#    Generating App Manifest    #"
 echo "#################################"
 echo ""
 
-cat << EOF > "manifest.vdf"
+cat << EOF > "$manifest_path"
 "appbuild"
 {
   "appid" "$appId"
   "desc" "$buildDescription"
-  "buildoutput" "BuildOutput"
+  "buildoutput" "$buildoutput"
   "contentroot" "$contentroot"
   "setlive" "$releaseBranch"
 
@@ -97,7 +105,7 @@ cat << EOF > "manifest.vdf"
 }
 EOF
 
-cat manifest.vdf
+cat "$manifest_path"
 echo ""
 
 if [ -n "$steam_totp" ]; then
@@ -164,7 +172,7 @@ echo "#        Uploading build        #"
 echo "#################################"
 echo ""
 
-steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit | tee build_output.log || (
+steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit | tee "$workdir/build_output.log" || (
     echo ""
     echo "#################################"
     echo "#             Errors            #"
@@ -201,9 +209,9 @@ steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit | tee bu
     echo "#             Output            #"
     echo "#################################"
     echo ""
-    ls -Ralph BuildOutput
+    ls -Ralph "$buildoutput"
 
-    for f in BuildOutput/*.log; do
+    for f in "$buildoutput"/*.log; do
       echo "######## $f"
       cat "$f"
       echo
@@ -212,7 +220,7 @@ steamcmd +login "$steam_username" +run_app_build "$manifest_path" +quit | tee bu
     exit 1
   )
 
-buildId=$(grep -oP '\(BuildID \K\d+(?=\))' build_output.log || echo "")
+buildId=$(grep -oP '\(BuildID \K\d+(?=\))' "$workdir/build_output.log" || echo "")
 
 echo "manifest=${manifest_path}" >> $GITHUB_OUTPUT
 echo "buildId=${buildId}" >> $GITHUB_OUTPUT

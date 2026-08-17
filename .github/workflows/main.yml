@@ -43,3 +43,20 @@ jobs:
           depot1Path: StandaloneWindows64
           depot2Path: StandaloneLinux64
           releaseBranch: prerelease
+
+      # Regression test for #79: the action must be runnable more than once in the same job,
+      # and must not leave root-owned files behind in the workspace.
+      - uses: ./
+        with:
+          username: ${{ secrets.STEAM_USERNAME }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
+          appId: ${{ secrets.TEST_APP_ID }}
+          buildDescription: v0.0.1
+          rootPath: build
+          depot1Path: StandaloneWindows64
+          depot2Path: StandaloneLinux64
+          releaseBranch: prerelease
+      - name: Workspace is clean and writable
+        run: |
+          test -z "$(find . -path ./.git -prune -o ! -writable -print)"
+          test ! -e BuildOutput
