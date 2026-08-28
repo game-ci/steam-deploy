@@ -15,8 +15,10 @@ inputs:
   configVdf:
     required: false
     description: >-
-      The contents of STEAM_HOME/config/config.vdf, so a previously-authorized
-      session can be reused without a TOTP code on every run.
+      The base64-encoded contents of STEAM_HOME/config/config.vdf (e.g. via
+      `cat config.vdf | base64`), so a previously-authorized session can be
+      reused without a TOTP code on every run. Passed through unchanged, so
+      it must already be base64-encoded - do not decode it yourself.
   appId:
     required: true
     default: ''
