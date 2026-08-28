@@ -125,4 +125,4 @@ jobs:
 
       - name: Workspace is clean and writable
         run: |
-          test -z "$(find . -path ./.git -prune -o ! -writable -print)"
+          test -z "$(find . -path ./.git -prune -o \( ! -writable -o ! -uid "$(id -u)" \) -print)"
