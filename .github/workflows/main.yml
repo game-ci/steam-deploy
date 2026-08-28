@@ -8,6 +8,13 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    # A per-step timeout doesn't bound an action's own implicit post-run
+    # cleanup step (e.g. actions/cache@v4's cache-save), which is exactly
+    # what's been observed hanging here - real work finishes (build
+    # succeeds, cleanup logs run) but the job status never flips to
+    # completed. A job-level timeout is the only thing that bounds that
+    # too, converting a silent multi-hour hang into a clear, fast failure.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -74,6 +81,7 @@ jobs:
   testDeploy:
     name: Deploy to Steam ☁
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     # Only run if secrets are available (e.g. not from PRs from forked repos)
     needs: [checkEnv]
