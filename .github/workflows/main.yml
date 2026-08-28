@@ -40,8 +40,6 @@ jobs:
             yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-
 
       - name: Install deps
-        env:
-          YARN_ENABLE_HARDENED_MODE: 'false'
         run: |
           case "$(yarn --version)" in 1.*) echo 'expected up-to-date yarn version'; exit 1 ;; esac
           yarn install --immutable

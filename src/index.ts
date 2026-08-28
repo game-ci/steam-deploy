@@ -25,9 +25,13 @@ async function run() {
     // this combination and throws a clear error if none apply.
     const password = core.getInput('password');
     const totp = core.getInput('totp');
-    // The old action's configVdf input is the file's raw contents; the CLI
-    // expects it base64-encoded (STEAM_CONFIG_VDF_BASE64), matching how
-    // it's stored/passed everywhere else credentials cross this boundary.
+    // The old action's configVdf input is documented (see README's setup
+    // steps) as the ALREADY base64-encoded config.vdf contents - real
+    // users' GitHub secrets are already base64, produced by `base64
+    // config.vdf` / certutil -encode. Passed straight through as
+    // STEAM_CONFIG_VDF_BASE64 - re-encoding it here would double-encode
+    // an already-base64 value, which the CLI can't decode back to a
+    // valid config.vdf.
     const configVdf = core.getInput('configVdf');
 
     const depotPaths: Record<number, string | undefined> = {};
@@ -59,17 +63,31 @@ async function run() {
     // comment does not suppress the alert (no inline-suppression
     // mechanism exists in GitHub Code Scanning's default setup); dismiss
     // via the Security tab/API instead.
+    let stdout = '';
     await exec.exec(cliPath, args, {
       env: {
         ...process.env,
         STEAM_USERNAME: username,
         ...(password ? { STEAM_PASSWORD: password } : {}),
         ...(totp ? { STEAM_TOTP: totp } : {}),
-        ...(configVdf
-          ? { STEAM_CONFIG_VDF_BASE64: Buffer.from(configVdf, 'utf8').toString('base64') }
-          : {}),
+        ...(configVdf ? { STEAM_CONFIG_VDF_BASE64: configVdf } : {}),
+      },
+      listeners: {
+        stdout: (data: Buffer) => {
+          stdout += data.toString();
+        },
       },
     });
+
+    // The CLI prints "Steam deployment succeeded. BuildID: <id>" on
+    // success (steam-deploy-command.ts) - the only place a new BuildID is
+    // ever surfaced, so it has to be scraped from stdout rather than
+    // returned structurally. Matches the old action's own `buildId`
+    // output.
+    const buildIdMatch = /BuildID:\s*(\d+)/.exec(stdout);
+    if (buildIdMatch) {
+      core.setOutput('buildId', buildIdMatch[1]);
+    }
   } catch (error: any) {
     core.setFailed(error.message);
   }

@@ -99,7 +99,9 @@ inputs:
       Release tag of the game-ci/cli binary to install and run (e.g.
       "v0.1.0"). Defaults to the latest release; pin this for reproducible
       builds.
-outputs: {}
+outputs:
+  buildId:
+    description: 'The Steam BuildID of the uploaded build, when SteamCMD reports one.'
 branding:
   icon: 'upload-cloud'
   color: 'gray-dark'
