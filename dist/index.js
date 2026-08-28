@@ -56,6 +56,8 @@ function buildCliArgs(inputs) {
         args.push('--description', inputs.buildDescription);
     if (inputs.debugBranch === 'true')
         args.push('--debugBranch');
+    if (inputs.extraExclusions)
+        args.push('--extraExclusions', inputs.extraExclusions);
     return args;
 }
 
@@ -361,6 +363,7 @@ async function run() {
             rootPath: core.getInput('rootPath') || '.',
             releaseBranch: core.getInput('releaseBranch') || undefined,
             debugBranch: core.getInput('debugBranch') || undefined,
+            extraExclusions: core.getInput('extraExclusions') || undefined,
             depotPaths,
             depotInstallScriptPaths,
         };

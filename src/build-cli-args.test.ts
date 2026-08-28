@@ -75,4 +75,15 @@ describe('buildCliArgs', () => {
     const args = buildCliArgs(baseInputs({ debugBranch: 'false' }));
     expect(args).not.toContain('--debugBranch');
   });
+
+  it('maps extraExclusions onto --extraExclusions', () => {
+    const args = buildCliArgs(baseInputs({ extraExclusions: '*.pdb,Docs/*' }));
+    expect(args).toContain('--extraExclusions');
+    expect(args[args.indexOf('--extraExclusions') + 1]).toBe('*.pdb,Docs/*');
+  });
+
+  it('omits --extraExclusions when unset', () => {
+    const args = buildCliArgs(baseInputs());
+    expect(args).not.toContain('--extraExclusions');
+  });
 });

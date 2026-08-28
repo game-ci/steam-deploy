@@ -88,6 +88,9 @@ inputs:
   releaseBranch:
     required: false
     description: 'The branch within steam that this build will be automatically put live on.'
+  extraExclusions:
+    required: false
+    description: 'Comma-separated extra file-exclusion glob patterns for the depot, beyond the built-in defaults (*.pdb, *.log, *.vdf, Burst debug/backup folders). Example: "*.pdb,Docs/*,*.tmp".'
   debugBranch:
     required: false
     description: 'If set to true, include debug symbols and directories in the upload'

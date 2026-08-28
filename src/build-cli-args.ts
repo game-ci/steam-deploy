@@ -7,6 +7,7 @@ export interface SteamDeployInputs {
   rootPath: string;
   releaseBranch?: string;
   debugBranch?: string;
+  extraExclusions?: string;
   /** depot1Path..depot9Path, indexed 1..9 (sparse - a given index may be unset). */
   depotPaths: Record<number, string | undefined>;
   /** depot1InstallScriptPath..depot9InstallScriptPath, indexed 1..9. */
@@ -59,6 +60,7 @@ export function buildCliArgs(inputs: SteamDeployInputs): string[] {
   if (inputs.releaseBranch) args.push('--branch', inputs.releaseBranch);
   if (inputs.buildDescription) args.push('--description', inputs.buildDescription);
   if (inputs.debugBranch === 'true') args.push('--debugBranch');
+  if (inputs.extraExclusions) args.push('--extraExclusions', inputs.extraExclusions);
 
   return args;
 }

@@ -48,6 +48,7 @@ async function run() {
       rootPath: core.getInput('rootPath') || '.',
       releaseBranch: core.getInput('releaseBranch') || undefined,
       debugBranch: core.getInput('debugBranch') || undefined,
+      extraExclusions: core.getInput('extraExclusions') || undefined,
       depotPaths,
       depotInstallScriptPaths,
     };
