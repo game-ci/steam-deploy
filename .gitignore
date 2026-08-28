@@ -1,2 +1,15 @@
 .idea
 build_output.log
+node_modules
+coverage/
+lib/
+
+# Yarn 4 (Berry)
+# Keep released yarn binaries + plugins + sdks + patches + versions; ignore everything else.
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
