@@ -7,8 +7,8 @@ inputs:
     default: ''
     description: 'The username of your builder account.'
   password:
-    required: true
-    description: 'The password of your builder account.'
+    required: false
+    description: 'The password of your builder account. Required unless totp or configVdf is set.'
   totp:
     required: false
     description: 'The TOTP to use for login.'

@@ -336,7 +336,9 @@ async function run() {
     try {
         const cliVersion = core.getInput('cliVersion') || 'latest';
         const username = core.getInput('username', { required: true });
-        const password = core.getInput('password', { required: true });
+        // Required unless totp or configVdf is set - the CLI itself validates
+        // this combination and throws a clear error if none apply.
+        const password = core.getInput('password');
         const totp = core.getInput('totp');
         // The old action's configVdf input is the file's raw contents; the CLI
         // expects it base64-encoded (STEAM_CONFIG_VDF_BASE64), matching how
@@ -372,7 +374,7 @@ async function run() {
             env: {
                 ...process.env,
                 STEAM_USERNAME: username,
-                STEAM_PASSWORD: password,
+                ...(password ? { STEAM_PASSWORD: password } : {}),
                 ...(totp ? { STEAM_TOTP: totp } : {}),
                 ...(configVdf
                     ? { STEAM_CONFIG_VDF_BASE64: Buffer.from(configVdf, 'utf8').toString('base64') }
