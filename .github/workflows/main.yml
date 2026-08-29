@@ -36,7 +36,7 @@ jobs:
         run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
 
       - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             node_modules
