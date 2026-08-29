@@ -8,13 +8,17 @@ inputs:
     description: 'The username of your builder account.'
   password:
     required: false
-    description: 'The password of your builder account. Required if `totp` is set.'
+    description: 'The password of your builder account. Required unless totp or configVdf is set.'
   totp:
     required: false
-    description: 'The TOTP to use for login. If set, `configVdf` will be ignored.'
+    description: 'The TOTP to use for login.'
   configVdf:
     required: false
-    description: 'The contents of STEAM_HOME/config/config.vdf. Required if `totp` is not set.'
+    description: >-
+      The base64-encoded contents of STEAM_HOME/config/config.vdf (e.g. via
+      `cat config.vdf | base64`), so a previously-authorized session can be
+      reused without a TOTP code on every run. Passed through unchanged, so
+      it must already be base64-encoded - do not decode it yourself.
   appId:
     required: true
     default: ''
@@ -27,6 +31,7 @@ inputs:
     description: 'Description for this build.'
   rootPath:
     required: false
+    default: '.'
     description: 'The root path to your builds. This is the base of which depots will search your files.'
   depot1Path:
     required: false
@@ -85,44 +90,26 @@ inputs:
   releaseBranch:
     required: false
     description: 'The branch within steam that this build will be automatically put live on.'
+  extraExclusions:
+    required: false
+    description: 'Comma-separated extra file-exclusion glob patterns for the depot, beyond the built-in defaults (*.pdb, *.log, *.vdf, Burst debug/backup folders). Example: "*.pdb,Docs/*,*.tmp".'
   debugBranch:
     required: false
     description: 'If set to true, include debug symbols and directories in the upload'
-    default: false
+    default: 'false'
+  cliVersion:
+    required: false
+    default: 'latest'
+    description: >-
+      Release tag of the game-ci/cli binary to install and run (e.g.
+      "v0.1.0"). Defaults to the latest release; pin this for reproducible
+      builds.
 outputs:
-  manifest:
-    description: "The path to the generated manifest.vdf"
   buildId:
-    description: "The Steam BuildID of the uploaded build"
+    description: 'The Steam BuildID of the uploaded build, when SteamCMD reports one.'
+branding:
+  icon: 'upload-cloud'
+  color: 'gray-dark'
 runs:
-  using: "docker"
-  image: Dockerfile
-  env:
-    steam_username: ${{ inputs.username }}
-    steam_password: ${{ inputs.password }}
-    steam_totp: ${{ inputs.totp }}
-    configVdf: ${{ inputs.configVdf }}
-    appId: ${{ inputs.appId }}
-    firstDepotIdOverride: ${{ inputs.firstDepotIdOverride }}
-    buildDescription: ${{ inputs.buildDescription }}
-    rootPath: ${{ inputs.rootPath }}
-    depot1Path: ${{ inputs.depot1Path }}
-    depot1InstallScriptPath: ${{ inputs.depot1InstallScriptPath }}
-    depot2Path: ${{ inputs.depot2Path }}
-    depot2InstallScriptPath: ${{ inputs.depot2InstallScriptPath }}
-    depot3Path: ${{ inputs.depot3Path }}
-    depot3InstallScriptPath: ${{ inputs.depot3InstallScriptPath }}
-    depot4Path: ${{ inputs.depot4Path }}
-    depot4InstallScriptPath: ${{ inputs.depot4InstallScriptPath }}
-    depot5Path: ${{ inputs.depot5Path }}
-    depot5InstallScriptPath: ${{ inputs.depot5InstallScriptPath }}
-    depot6Path: ${{ inputs.depot6Path }}
-    depot6InstallScriptPath: ${{ inputs.depot6InstallScriptPath }}
-    depot7Path: ${{ inputs.depot7Path }}
-    depot7InstallScriptPath: ${{ inputs.depot7InstallScriptPath }}
-    depot8Path: ${{ inputs.depot8Path }}
-    depot8InstallScriptPath: ${{ inputs.depot8InstallScriptPath }}
-    depot9Path: ${{ inputs.depot9Path }}
-    depot9InstallScriptPath: ${{ inputs.depot9InstallScriptPath }}
-    releaseBranch: ${{ inputs.releaseBranch }}
-    debugBranch: ${{ inputs.debugBranch }}
+  using: 'node20'
+  main: 'dist/index.js'

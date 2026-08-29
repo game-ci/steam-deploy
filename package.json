@@ -1,0 +1,54 @@
+{
+  "name": "steam-deploy",
+  "version": "3.0.0",
+  "description": "Deploy game builds to Steam using the SteamSDK.",
+  "main": "dist/index.js",
+  "repository": "git@github.com:game-ci/steam-deploy.git",
+  "author": "Webber <webber@takken.io>",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "yarn",
+    "build": "tsc && ncc build lib --source-map --license licenses.txt",
+    "test": "node scripts/ensure-husky.mjs && vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "lint": "yarn oxlint --report-unused-disable-directives",
+    "format": "oxfmt --write",
+    "format:check": "oxfmt --check",
+    "typecheck": "tsc --noEmit",
+    "typecheck:tsgo": "tsgo --noEmit",
+    "setup:hooks": "node scripts/ensure-husky.mjs",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "!(dist)/**/*.@(ts|tsx|mts|js|jsx|mjs|cjs)": [
+      "oxlint --fix --quiet --no-error-on-unmatched-pattern",
+      "oxfmt --write"
+    ],
+    "!(dist)/**/*.@(json|jsonc|json5|md|mdx|yaml|yml|css|scss|sass|html|toml)": "oxfmt --write",
+    "package.json": "oxfmt --write",
+    ".github/workflows/*.@(yml|yaml)": "actionlint"
+  },
+  "dependencies": {
+    "@actions/cache": "^4.0.0",
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.8",
+    "@typescript/native-preview": "^7.0.0-dev.20260505.1",
+    "@vercel/ncc": "^0.33.1",
+    "@vitest/coverage-istanbul": "^4.1.5",
+    "husky": "9",
+    "lint-staged": "^16",
+    "oxfmt": "^0.48.0",
+    "oxlint": "^1.63.0",
+    "typescript": "^5",
+    "vite": "^7",
+    "vitest": "^4"
+  },
+  "packageManager": "yarn@4.14.1",
+  "resolutions": {
+    "undici": "^6.24.0"
+  }
+}

@@ -4,6 +4,15 @@
 
 Github Action to deploy a game to Steam
 
+> **Thin wrapper migration**: this action now installs and shells out to
+> [game-ci/cli](https://github.com/game-ci/cli)'s `deploy steam` command
+> instead of running its own bundled Docker image - see
+> [game-ci/roadmap#11](https://github.com/game-ci/roadmap/issues/11). All
+> existing inputs (`username`, `depot1Path`..`depot9Path`, etc.) keep
+> working unchanged, with one exception: `password` is now always
+> required (previously optional when `totp` was set) - the CLI's steamcmd
+> login always includes it.
+
 ## Setup
 
 #### Prerequisites
@@ -40,8 +49,8 @@ jobs:
     steps:
       - uses: game-ci/steam-deploy@v3
         with:
-          username: ${{ secrets.STEAM_USERNAME }}          
-          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}          
+          username: ${{ secrets.STEAM_USERNAME }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
           appId: 1234560
           buildDescription: v1.2.3
           rootPath: build
@@ -104,16 +113,20 @@ If you are using the `config.vdf` method, follow these steps to set up the requi
 
 2. **Log in to Steam using steamcmd**  
    Run the following command to log in:
+
    ```bash
    steamcmd +login <username> <password> +quit
    ```
+
    If prompted, check your email for the MFA code and provide it when requested.
 
 3. **Validate MFA completion**  
    To ensure MFA is complete, run:
+
    ```bash
    steamcmd +login <username> +quit
    ```
+
    If no MFA prompt appears, proceed to the next step.
 
 4. **Locate and encode the `config.vdf` file**  
@@ -121,35 +134,40 @@ If you are using the `config.vdf` method, follow these steps to set up the requi
    - **Windows/Linux**: The file is in the `config/config.vdf` relative to where you ran `steamcmd`.
    - **macOS**: The file is located at `~/Library/Application Support/Steam/config/config.vdf`.
 
-    Encode the file and store it as a GitHub Secret:
-    ```bash
-    # Windows/Linux
-    cat config/config.vdf | base64 > config_base64.txt
-    
-    # macOS
-    cat ~/Library/Application\ Support/Steam/config/config.vdf | base64 > config_base64.txt
-    ```
-    ⚠️ **IMPORTANT**: The encoded `config.vdf` contains sensitive authentication data. Ensure you:
+   Encode the file and store it as a GitHub Secret:
+
+   ```bash
+   # Windows/Linux
+   cat config/config.vdf | base64 > config_base64.txt
+
+   # macOS
+   cat ~/Library/Application\ Support/Steam/config/config.vdf | base64 > config_base64.txt
+   ```
+
+   ⚠️ **IMPORTANT**: The encoded `config.vdf` contains sensitive authentication data. Ensure you:
    - Store it securely as a GitHub Secret named `STEAM_CONFIG_VDF`.
    - Never commit the raw or encoded `config.vdf` to your repository.
    - Rotate it periodically or if it is compromised.
 
 5. **Handling new MFA code requests**  
    If the GitHub Action requests a new MFA code, run:
+
    ```bash
    steamcmd +set_steam_guard_code <code>
    ```
+
    Generate a new encoded `config.vdf` file (see step 4) and update the `STEAM_CONFIG_VDF` GitHub Secret with its contents.
 
 6. **Resolving 'License expired' error**  
    If the action fails with the error `Logging in user ... to Steam Public...FAILED (License expired)`, follow these steps:
-  - On your local machine, run:
-    ```bash
-    steamcmd +login <username>
-    ```
-  - Enter the new Steam Guard code sent to your email.
-  - Generate a new encoded `config.vdf` file (see step 4).
-  - Update your `STEAM_CONFIG_VDF` GitHub Secret with the new encoded value.
+
+- On your local machine, run:
+  ```bash
+  steamcmd +login <username>
+  ```
+- Enter the new Steam Guard code sent to your email.
+- Generate a new encoded `config.vdf` file (see step 4).
+- Update your `STEAM_CONFIG_VDF` GitHub Secret with the new encoded value.
 
 #### appId
 
@@ -157,7 +175,7 @@ The identifier of your app on steam. You can find it on your [dashboard](https:/
 
 #### buildDescription
 
-The identifier for this specific build, which helps you identify it in steam. 
+The identifier for this specific build, which helps you identify it in steam.
 
 It is recommended to use the semantic version of the build for this.
 
@@ -199,5 +217,5 @@ Certain file or folder patterns are excluded from the upload to Steam as they're
 
 - `*.pdb` - symbols files
 - Folders that Unity includes in builds with debugging or other information that isn't intended to be sent to players:
-    - `*_BurstDebugInformation_DoNotShip`
-    - `*_BackUpThisFolder_ButDontShipItWithYourGame`
+  - `*_BurstDebugInformation_DoNotShip`
+  - `*_BackUpThisFolder_ButDontShipItWithYourGame`
