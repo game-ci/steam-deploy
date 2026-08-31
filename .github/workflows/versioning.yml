@@ -8,5 +8,6 @@ jobs:
   updateMajorTag:
     name: Update major tag
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: Actions-R-Us/actions-tagger@v2
