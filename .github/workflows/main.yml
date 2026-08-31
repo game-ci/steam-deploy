@@ -8,12 +8,7 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
-    # A per-step timeout doesn't bound an action's own implicit post-run
-    # cleanup step (e.g. actions/cache@v4's cache-save), which is exactly
-    # what's been observed hanging here - real work finishes (build
-    # succeeds, cleanup logs run) but the job status never flips to
-    # completed. A job-level timeout is the only thing that bounds that
-    # too, converting a silent multi-hour hang into a clear, fast failure.
+    # Reasonable backstop against any unexpectedly long-running step.
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +31,7 @@ jobs:
         run: echo "cacheFolder=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
 
       - name: Restore yarn install cache (node_modules + cacheFolder + install-state)
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -66,9 +61,26 @@ jobs:
       - name: Build
         run: yarn build || { echo 'build command should always succeed'; exit 61; }
 
+      - name: Verify dist is up to date
+        run: |
+          [ -z "$(git status --porcelain dist)" ] || { echo "dist is out of date - run 'yarn build' and commit the result"; git status --porcelain dist; git diff -- dist; exit 1; }
+
+      - name: Save yarn install cache (node_modules + cacheFolder + install-state)
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-config.outputs.cacheFolder }}
+            .yarn/install-state.gz
+          key: yarn-${{ runner.os }}-node${{ steps.node.outputs.version }}-${{ hashFiles('yarn.lock') }}
+        timeout-minutes: 5
+        continue-on-error: true
+
   checkEnv:
     name: Check Env 🔎
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       usernameExists: ${{ steps.checkUsername.outputs.usernameExists }}
     steps:
