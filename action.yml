@@ -111,5 +111,5 @@ branding:
   icon: 'upload-cloud'
   color: 'gray-dark'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
