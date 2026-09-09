@@ -109,6 +109,17 @@ jobs:
 
       - name: Deploy
         uses: ./
+        # Without this, this step's `game-ci` CLI download resolves
+        # cliVersion "latest" via an unauthenticated GitHub API call -
+        # GitHub-hosted runners share IPs across many concurrent jobs from
+        # unrelated repos/orgs, so the 60 req/hour anonymous rate limit gets
+        # exhausted by traffic this job never generated, surfacing as
+        # "Failed to resolve the latest game-ci CLI release: GitHub API
+        # returned 403." The default GITHUB_TOKEN lifts that to 5000
+        # req/hour and is already read by download-cli.ts when present -
+        # it just needs to actually be in this step's environment.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
@@ -124,6 +135,8 @@ jobs:
       # the same job, and must not leave root-owned files behind.
       - name: Deploy again
         uses: ./
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
