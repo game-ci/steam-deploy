@@ -108,7 +108,15 @@ async function run() {
   } catch (error: any) {
     core.setFailed(error.message);
   } finally {
-    if (steamCmd) await removeSteamCmd(steamCmd);
+    if (steamCmd) {
+      try {
+        await removeSteamCmd(steamCmd);
+      } catch (error) {
+        core.warning(
+          `Failed to remove ${steamCmd.root}; its Steam session may remain on disk: ${(error as Error).message}`,
+        );
+      }
+    }
   }
 }
 

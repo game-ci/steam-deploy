@@ -135,5 +135,7 @@ export async function installSteamCmd(): Promise<SteamCmdInstall> {
  * cannot reuse it.
  */
 export async function removeSteamCmd(steamCmd: SteamCmdInstall): Promise<void> {
-  await fs.rm(steamCmd.root, { recursive: true, force: true });
+  // Retries cover EBUSY and EPERM while Windows still holds a lock on a file
+  // that steamcmd just closed.
+  await fs.rm(steamCmd.root, { recursive: true, force: true, maxRetries: 5 });
 }

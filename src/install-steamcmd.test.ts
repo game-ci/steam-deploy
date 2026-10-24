@@ -78,7 +78,11 @@ describe('installSteamCmd', () => {
     vi.mocked(exec.exec).mockResolvedValueOnce(0).mockResolvedValue(8);
 
     await expect(installSteamCmd()).rejects.toThrow();
-    expect(fs.rm).toHaveBeenLastCalledWith('/tmp/steamcmd-abc', { recursive: true, force: true });
+    expect(fs.rm).toHaveBeenLastCalledWith('/tmp/steamcmd-abc', {
+      recursive: true,
+      force: true,
+      maxRetries: 5,
+    });
   });
 
   it('retries once when the self-update run exits non-zero', async () => {
@@ -114,6 +118,10 @@ describe('removeSteamCmd', () => {
 
     await removeSteamCmd(await installSteamCmd());
 
-    expect(fs.rm).toHaveBeenLastCalledWith('/tmp/steamcmd-abc', { recursive: true, force: true });
+    expect(fs.rm).toHaveBeenLastCalledWith('/tmp/steamcmd-abc', {
+      recursive: true,
+      force: true,
+      maxRetries: 5,
+    });
   });
 });

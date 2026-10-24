@@ -423,8 +423,14 @@ async function run() {
         core.setFailed(error.message);
     }
     finally {
-        if (steamCmd)
-            await (0, install_steamcmd_1.removeSteamCmd)(steamCmd);
+        if (steamCmd) {
+            try {
+                await (0, install_steamcmd_1.removeSteamCmd)(steamCmd);
+            }
+            catch (error) {
+                core.warning(`Failed to remove ${steamCmd.root}; its Steam session may remain on disk: ${error.message}`);
+            }
+        }
     }
 }
 run();
@@ -574,7 +580,9 @@ async function installSteamCmd() {
  * cannot reuse it.
  */
 async function removeSteamCmd(steamCmd) {
-    await fs.rm(steamCmd.root, { recursive: true, force: true });
+    // Retries cover EBUSY and EPERM while Windows still holds a lock on a file
+    // that steamcmd just closed.
+    await fs.rm(steamCmd.root, { recursive: true, force: true, maxRetries: 5 });
 }
 
 
