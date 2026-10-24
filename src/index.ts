@@ -12,12 +12,18 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import { downloadCli } from './download-cli';
-import { installSteamCmd } from './install-steamcmd';
+import { installSteamCmd, removeSteamCmd, type SteamCmdInstall } from './install-steamcmd';
 import { buildCliArgs, type SteamDeployInputs } from './build-cli-args';
 
 const MAX_DEPOTS = 9;
 
+/**
+ * Installs the game-ci CLI and Valve's steamcmd, then runs the CLI's
+ * `deploy steam` command with this action's inputs. steamcmd and its Steam
+ * session are removed afterwards, also when the deployment fails.
+ */
 async function run() {
+  let steamCmd: SteamCmdInstall | undefined;
   try {
     const cliVersion = core.getInput('cliVersion') || 'latest';
 
@@ -55,7 +61,7 @@ async function run() {
     };
 
     const cliPath = await downloadCli(cliVersion);
-    const steamCmd = await installSteamCmd();
+    steamCmd = await installSteamCmd();
     const args = [
       ...buildCliArgs(inputs),
       '--mode',
@@ -76,6 +82,7 @@ async function run() {
     await exec.exec(cliPath, args, {
       env: {
         ...process.env,
+        ...steamCmd.env,
         STEAM_HOME: steamCmd.steamHome,
         STEAM_USERNAME: username,
         ...(password ? { STEAM_PASSWORD: password } : {}),
@@ -100,6 +107,8 @@ async function run() {
     }
   } catch (error: any) {
     core.setFailed(error.message);
+  } finally {
+    if (steamCmd) await removeSteamCmd(steamCmd);
   }
 }
 

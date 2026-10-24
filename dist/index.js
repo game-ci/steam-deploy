@@ -336,7 +336,13 @@ const download_cli_1 = __nccwpck_require__(83431);
 const install_steamcmd_1 = __nccwpck_require__(67934);
 const build_cli_args_1 = __nccwpck_require__(99633);
 const MAX_DEPOTS = 9;
+/**
+ * Installs the game-ci CLI and Valve's steamcmd, then runs the CLI's
+ * `deploy steam` command with this action's inputs. steamcmd and its Steam
+ * session are removed afterwards, also when the deployment fails.
+ */
 async function run() {
+    let steamCmd;
     try {
         const cliVersion = core.getInput('cliVersion') || 'latest';
         const username = core.getInput('username', { required: true });
@@ -370,7 +376,7 @@ async function run() {
             depotInstallScriptPaths,
         };
         const cliPath = await (0, download_cli_1.downloadCli)(cliVersion);
-        const steamCmd = await (0, install_steamcmd_1.installSteamCmd)();
+        steamCmd = await (0, install_steamcmd_1.installSteamCmd)();
         const args = [
             ...(0, build_cli_args_1.buildCliArgs)(inputs),
             '--mode',
@@ -390,6 +396,7 @@ async function run() {
         await exec.exec(cliPath, args, {
             env: {
                 ...process.env,
+                ...steamCmd.env,
                 STEAM_HOME: steamCmd.steamHome,
                 STEAM_USERNAME: username,
                 ...(password ? { STEAM_PASSWORD: password } : {}),
@@ -414,6 +421,10 @@ async function run() {
     }
     catch (error) {
         core.setFailed(error.message);
+    }
+    finally {
+        if (steamCmd)
+            await (0, install_steamcmd_1.removeSteamCmd)(steamCmd);
     }
 }
 run();
@@ -462,6 +473,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.steamCmdLayoutFor = steamCmdLayoutFor;
 exports.installSteamCmd = installSteamCmd;
+exports.removeSteamCmd = removeSteamCmd;
 const fs = __importStar(__nccwpck_require__(93977));
 const os = __importStar(__nccwpck_require__(70612));
 const path = __importStar(__nccwpck_require__(49411));
@@ -471,7 +483,7 @@ const INSTALLER_BASE_URL = 'https://steamcdn-a.akamaihd.net/client/installer';
 /**
  * Describes Valve's own steamcmd distribution for a given platform. Paths
  * were confirmed on GitHub-hosted ubuntu-24.04, ubuntu-26.04, macos and
- * windows runners.
+ * windows runners, including with HOME pointed at homeDir.
  */
 function steamCmdLayoutFor(platform, installDir, homeDir) {
     switch (platform) {
@@ -480,18 +492,21 @@ function steamCmdLayoutFor(platform, installDir, homeDir) {
                 url: `${INSTALLER_BASE_URL}/steamcmd.zip`,
                 executable: path.join(installDir, 'steamcmd.exe'),
                 steamHome: installDir,
+                env: {},
             };
         case 'darwin':
             return {
                 url: `${INSTALLER_BASE_URL}/steamcmd_osx.tar.gz`,
                 executable: path.join(installDir, 'steamcmd.sh'),
                 steamHome: path.join(homeDir, 'Library', 'Application Support', 'Steam'),
+                env: { HOME: homeDir },
             };
         default:
             return {
                 url: `${INSTALLER_BASE_URL}/steamcmd_linux.tar.gz`,
                 executable: path.join(installDir, 'steamcmd.sh'),
                 steamHome: path.join(homeDir, 'Steam'),
+                env: { HOME: homeDir },
             };
     }
 }
@@ -505,37 +520,61 @@ function steamCmdLayoutFor(platform, installDir, homeDir) {
  * AF_ALG sockets, and steamcmd then fails its self-update with "Steamcmd
  * needs to be online to update". Running it natively avoids the container
  * entirely and works on every GitHub-hosted runner OS.
+ *
+ * steamcmd and its Steam home live in a new per-run directory, so the login
+ * session it stores in config/config.vdf never lands in the runner user's
+ * real home. Call removeSteamCmd() when the deployment is done.
  */
 async function installSteamCmd() {
-    const installDir = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'steamcmd');
-    const layout = steamCmdLayoutFor(process.platform, installDir, os.homedir());
-    await fs.mkdir(installDir, { recursive: true });
-    core.info(`Downloading steamcmd from ${layout.url}`);
-    const response = await fetch(layout.url);
-    if (!response.ok) {
-        throw new Error(`Failed to download steamcmd: ${layout.url} returned ${response.status}.`);
-    }
-    const archive = path.join(installDir, path.basename(layout.url));
-    await fs.writeFile(archive, Buffer.from(await response.arrayBuffer()));
-    // Windows' bundled bsdtar extracts zip archives; Git for Windows' GNU tar,
-    // which can come first in PATH, cannot.
-    const tar = process.platform === 'win32'
-        ? path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe')
-        : 'tar';
-    await exec.exec(tar, ['-xf', archive, '-C', installDir]);
-    await fs.rm(archive);
-    // The first run downloads the latest steamcmd and replaces itself. On
-    // Windows that run exits non-zero after the self-update, so a second run
-    // confirms the updated steamcmd starts cleanly.
-    for (let attempt = 1;; attempt += 1) {
-        const exitCode = await exec.exec(layout.executable, ['+quit'], { ignoreReturnCode: true });
-        if (exitCode === 0)
-            break;
-        if (attempt === 2) {
-            throw new Error(`steamcmd failed to update to the latest version (exit code ${exitCode}).`);
+    const root = await fs.mkdtemp(path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'steamcmd-'));
+    const installDir = path.join(root, 'install');
+    const homeDir = path.join(root, 'home');
+    const steamCmd = { root, ...steamCmdLayoutFor(process.platform, installDir, homeDir) };
+    try {
+        await fs.mkdir(installDir, { recursive: true });
+        await fs.mkdir(homeDir, { recursive: true });
+        core.info(`Downloading steamcmd from ${steamCmd.url}`);
+        const response = await fetch(steamCmd.url);
+        if (!response.ok) {
+            throw new Error(`Failed to download steamcmd: ${steamCmd.url} returned ${response.status}.`);
+        }
+        const archive = path.join(root, path.basename(steamCmd.url));
+        await fs.writeFile(archive, Buffer.from(await response.arrayBuffer()));
+        // Windows' bundled bsdtar extracts zip archives; Git for Windows' GNU tar,
+        // which can come first in PATH, cannot.
+        const tar = process.platform === 'win32'
+            ? path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe')
+            : 'tar';
+        await exec.exec(tar, ['-xf', archive, '-C', installDir]);
+        await fs.rm(archive);
+        // The first run downloads the latest steamcmd and replaces itself. On
+        // Windows that run exits non-zero after the self-update, so a second run
+        // confirms the updated steamcmd starts cleanly.
+        for (let attempt = 1;; attempt += 1) {
+            const exitCode = await exec.exec(steamCmd.executable, ['+quit'], {
+                env: { ...process.env, ...steamCmd.env },
+                ignoreReturnCode: true,
+            });
+            if (exitCode === 0)
+                break;
+            if (attempt === 2) {
+                throw new Error(`steamcmd failed to update to the latest version (exit code ${exitCode}).`);
+            }
         }
     }
-    return layout;
+    catch (error) {
+        await removeSteamCmd(steamCmd);
+        throw error;
+    }
+    return steamCmd;
+}
+/**
+ * Removes steamcmd and its Steam home, including the login session in
+ * config/config.vdf, so a later job on a persistent self-hosted runner
+ * cannot reuse it.
+ */
+async function removeSteamCmd(steamCmd) {
+    await fs.rm(steamCmd.root, { recursive: true, force: true });
 }
 
 
