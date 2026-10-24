@@ -12,6 +12,7 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import { downloadCli } from './download-cli';
+import { installSteamCmd } from './install-steamcmd';
 import { buildCliArgs, type SteamDeployInputs } from './build-cli-args';
 
 const MAX_DEPOTS = 9;
@@ -54,7 +55,14 @@ async function run() {
     };
 
     const cliPath = await downloadCli(cliVersion);
-    const args = buildCliArgs(inputs);
+    const steamCmd = await installSteamCmd();
+    const args = [
+      ...buildCliArgs(inputs),
+      '--mode',
+      'local',
+      '--steamCmdPath',
+      steamCmd.executable,
+    ];
 
     // CodeQL flags this as js/command-line-injection since some argv
     // entries derive from action inputs. Verified false positive: args is
@@ -68,6 +76,7 @@ async function run() {
     await exec.exec(cliPath, args, {
       env: {
         ...process.env,
+        STEAM_HOME: steamCmd.steamHome,
         STEAM_USERNAME: username,
         ...(password ? { STEAM_PASSWORD: password } : {}),
         ...(totp ? { STEAM_TOTP: totp } : {}),
