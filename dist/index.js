@@ -20,7 +20,10 @@ const MAX_DEPOTS = 9;
  * (depot1Path..depot9Path). depot1 here maps onto that primary depot
  * (its ID is --firstDepotIdOverride, defaulting to appId+1 - the same
  * default the old action itself used), and depot2..depot9 shift down by
- * one onto the CLI's extra depot1Path..depot8Path slots.
+ * one onto the CLI's extra depot1Path..depot8Path slots. Those extras
+ * keep the CLI's default numbering (--depotId + 1, + 2, ...), which matches
+ * the old action's depot2 = firstDepotIdOverride + 1, so the override is
+ * not forwarded as the CLI's own --firstDepotIdOverride.
  */
 function buildCliArgs(inputs) {
     const primaryDepotId = inputs.firstDepotIdOverride ?? String(Number.parseInt(inputs.appId, 10) + 1);
@@ -48,8 +51,6 @@ function buildCliArgs(inputs) {
             args.push(`--depot${extraSlot}InstallScriptPath`, installScript);
         extraSlot += 1;
     }
-    if (inputs.firstDepotIdOverride)
-        args.push('--firstDepotIdOverride', inputs.firstDepotIdOverride);
     if (inputs.releaseBranch)
         args.push('--branch', inputs.releaseBranch);
     if (inputs.buildDescription)
