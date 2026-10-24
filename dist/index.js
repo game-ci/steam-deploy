@@ -20,7 +20,10 @@ const MAX_DEPOTS = 9;
  * (depot1Path..depot9Path). depot1 here maps onto that primary depot
  * (its ID is --firstDepotIdOverride, defaulting to appId+1 - the same
  * default the old action itself used), and depot2..depot9 shift down by
- * one onto the CLI's extra depot1Path..depot8Path slots.
+ * one onto the CLI's extra depot1Path..depot8Path slots. Those extras
+ * keep the CLI's default numbering (--depotId + 1, + 2, ...), which matches
+ * the old action's depot2 = firstDepotIdOverride + 1, so the override is
+ * not forwarded as the CLI's own --firstDepotIdOverride.
  */
 function buildCliArgs(inputs) {
     const primaryDepotId = inputs.firstDepotIdOverride ?? String(Number.parseInt(inputs.appId, 10) + 1);
@@ -48,8 +51,6 @@ function buildCliArgs(inputs) {
             args.push(`--depot${extraSlot}InstallScriptPath`, installScript);
         extraSlot += 1;
     }
-    if (inputs.firstDepotIdOverride)
-        args.push('--firstDepotIdOverride', inputs.firstDepotIdOverride);
     if (inputs.releaseBranch)
         args.push('--branch', inputs.releaseBranch);
     if (inputs.buildDescription)
@@ -332,9 +333,16 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(42186));
 const exec = __importStar(__nccwpck_require__(71514));
 const download_cli_1 = __nccwpck_require__(83431);
+const install_steamcmd_1 = __nccwpck_require__(67934);
 const build_cli_args_1 = __nccwpck_require__(99633);
 const MAX_DEPOTS = 9;
+/**
+ * Installs the game-ci CLI and Valve's steamcmd, then runs the CLI's
+ * `deploy steam` command with this action's inputs. steamcmd and its Steam
+ * session are removed afterwards, also when the deployment fails.
+ */
 async function run() {
+    let steamCmd;
     try {
         const cliVersion = core.getInput('cliVersion') || 'latest';
         const username = core.getInput('username', { required: true });
@@ -368,7 +376,14 @@ async function run() {
             depotInstallScriptPaths,
         };
         const cliPath = await (0, download_cli_1.downloadCli)(cliVersion);
-        const args = (0, build_cli_args_1.buildCliArgs)(inputs);
+        steamCmd = await (0, install_steamcmd_1.installSteamCmd)();
+        const args = [
+            ...(0, build_cli_args_1.buildCliArgs)(inputs),
+            '--mode',
+            'local',
+            '--steamCmdPath',
+            steamCmd.executable,
+        ];
         // CodeQL flags this as js/command-line-injection since some argv
         // entries derive from action inputs. Verified false positive: args is
         // an array of discrete argv entries, and @actions/exec's
@@ -381,6 +396,8 @@ async function run() {
         await exec.exec(cliPath, args, {
             env: {
                 ...process.env,
+                ...steamCmd.env,
+                STEAM_HOME: steamCmd.steamHome,
                 STEAM_USERNAME: username,
                 ...(password ? { STEAM_PASSWORD: password } : {}),
                 ...(totp ? { STEAM_TOTP: totp } : {}),
@@ -405,8 +422,168 @@ async function run() {
     catch (error) {
         core.setFailed(error.message);
     }
+    finally {
+        if (steamCmd) {
+            try {
+                await (0, install_steamcmd_1.removeSteamCmd)(steamCmd);
+            }
+            catch (error) {
+                core.warning(`Failed to remove ${steamCmd.root}; its Steam session may remain on disk: ${error.message}`);
+            }
+        }
+    }
 }
 run();
+
+
+/***/ }),
+
+/***/ 67934:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.steamCmdLayoutFor = steamCmdLayoutFor;
+exports.installSteamCmd = installSteamCmd;
+exports.removeSteamCmd = removeSteamCmd;
+const fs = __importStar(__nccwpck_require__(93977));
+const os = __importStar(__nccwpck_require__(70612));
+const path = __importStar(__nccwpck_require__(49411));
+const core = __importStar(__nccwpck_require__(42186));
+const exec = __importStar(__nccwpck_require__(71514));
+const INSTALLER_BASE_URL = 'https://steamcdn-a.akamaihd.net/client/installer';
+/**
+ * Describes Valve's own steamcmd distribution for a given platform. Paths
+ * were confirmed on GitHub-hosted ubuntu-24.04, ubuntu-26.04, macos and
+ * windows runners, including with HOME pointed at homeDir.
+ */
+function steamCmdLayoutFor(platform, installDir, homeDir) {
+    switch (platform) {
+        case 'win32':
+            return {
+                url: `${INSTALLER_BASE_URL}/steamcmd.zip`,
+                executable: path.join(installDir, 'steamcmd.exe'),
+                steamHome: installDir,
+                env: {},
+            };
+        case 'darwin':
+            return {
+                url: `${INSTALLER_BASE_URL}/steamcmd_osx.tar.gz`,
+                executable: path.join(installDir, 'steamcmd.sh'),
+                steamHome: path.join(homeDir, 'Library', 'Application Support', 'Steam'),
+                env: { HOME: homeDir },
+            };
+        default:
+            return {
+                url: `${INSTALLER_BASE_URL}/steamcmd_linux.tar.gz`,
+                executable: path.join(installDir, 'steamcmd.sh'),
+                steamHome: path.join(homeDir, 'Steam'),
+                env: { HOME: homeDir },
+            };
+    }
+}
+/**
+ * Installs Valve's official steamcmd natively on the runner and updates it
+ * to the latest version, so the CLI can run it in local mode instead of
+ * through Docker.
+ *
+ * Running steamcmd in a container breaks on Docker 29.4.2 (the version on
+ * GitHub's ubuntu-26.04 runner image): its default seccomp profile blocks
+ * AF_ALG sockets, and steamcmd then fails its self-update with "Steamcmd
+ * needs to be online to update". Running it natively avoids the container
+ * entirely and works on every GitHub-hosted runner OS.
+ *
+ * steamcmd and its Steam home live in a new per-run directory, so the login
+ * session it stores in config/config.vdf never lands in the runner user's
+ * real home. Call removeSteamCmd() when the deployment is done.
+ */
+async function installSteamCmd() {
+    const root = await fs.mkdtemp(path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'steamcmd-'));
+    const installDir = path.join(root, 'install');
+    const homeDir = path.join(root, 'home');
+    const steamCmd = { root, ...steamCmdLayoutFor(process.platform, installDir, homeDir) };
+    try {
+        await fs.mkdir(installDir, { recursive: true });
+        await fs.mkdir(homeDir, { recursive: true });
+        core.info(`Downloading steamcmd from ${steamCmd.url}`);
+        const response = await fetch(steamCmd.url);
+        if (!response.ok) {
+            throw new Error(`Failed to download steamcmd: ${steamCmd.url} returned ${response.status}.`);
+        }
+        const archive = path.join(root, path.basename(steamCmd.url));
+        await fs.writeFile(archive, Buffer.from(await response.arrayBuffer()));
+        // Windows' bundled bsdtar extracts zip archives; Git for Windows' GNU tar,
+        // which can come first in PATH, cannot.
+        const tar = process.platform === 'win32'
+            ? path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe')
+            : 'tar';
+        await exec.exec(tar, ['-xf', archive, '-C', installDir]);
+        await fs.rm(archive);
+        // The first run downloads the latest steamcmd and replaces itself. On
+        // Windows that run exits non-zero after the self-update, so a second run
+        // confirms the updated steamcmd starts cleanly.
+        for (let attempt = 1;; attempt += 1) {
+            const exitCode = await exec.exec(steamCmd.executable, ['+quit'], {
+                env: { ...process.env, ...steamCmd.env },
+                ignoreReturnCode: true,
+            });
+            if (exitCode === 0)
+                break;
+            if (attempt === 2) {
+                throw new Error(`steamcmd failed to update to the latest version (exit code ${exitCode}).`);
+            }
+        }
+    }
+    catch (error) {
+        await removeSteamCmd(steamCmd);
+        throw error;
+    }
+    return steamCmd;
+}
+/**
+ * Removes steamcmd and its Steam home, including the login session in
+ * config/config.vdf, so a later job on a persistent self-hosted runner
+ * cannot reuse it.
+ */
+async function removeSteamCmd(steamCmd) {
+    // Retries cover EBUSY and EPERM while Windows still holds a lock on a file
+    // that steamcmd just closed.
+    await fs.rm(steamCmd.root, { recursive: true, force: true, maxRetries: 5 });
+}
 
 
 /***/ }),

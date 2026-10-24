@@ -25,7 +25,10 @@ export interface SteamDeployInputs {
  * (depot1Path..depot9Path). depot1 here maps onto that primary depot
  * (its ID is --firstDepotIdOverride, defaulting to appId+1 - the same
  * default the old action itself used), and depot2..depot9 shift down by
- * one onto the CLI's extra depot1Path..depot8Path slots.
+ * one onto the CLI's extra depot1Path..depot8Path slots. Those extras
+ * keep the CLI's default numbering (--depotId + 1, + 2, ...), which matches
+ * the old action's depot2 = firstDepotIdOverride + 1, so the override is
+ * not forwarded as the CLI's own --firstDepotIdOverride.
  */
 export function buildCliArgs(inputs: SteamDeployInputs): string[] {
   const primaryDepotId =
@@ -56,7 +59,6 @@ export function buildCliArgs(inputs: SteamDeployInputs): string[] {
     extraSlot += 1;
   }
 
-  if (inputs.firstDepotIdOverride) args.push('--firstDepotIdOverride', inputs.firstDepotIdOverride);
   if (inputs.releaseBranch) args.push('--branch', inputs.releaseBranch);
   if (inputs.buildDescription) args.push('--description', inputs.buildDescription);
   if (inputs.debugBranch === 'true') args.push('--debugBranch');

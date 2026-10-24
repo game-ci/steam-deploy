@@ -21,7 +21,13 @@ describe('buildCliArgs', () => {
     const args = buildCliArgs(baseInputs({ firstDepotIdOverride: '2000' }));
     expect(args).toContain('--depotId');
     expect(args[args.indexOf('--depotId') + 1]).toBe('2000');
-    expect(args).toContain('--firstDepotIdOverride');
+  });
+
+  it('does not forward firstDepotIdOverride, so depot2 keeps the old firstDepotIdOverride + 1 id', () => {
+    const args = buildCliArgs(
+      baseInputs({ firstDepotIdOverride: '2000', depotPaths: { 1: 'content', 2: 'windows' } }),
+    );
+    expect(args).not.toContain('--firstDepotIdOverride');
   });
 
   it('maps depot1Path onto the primary --depotPath', () => {

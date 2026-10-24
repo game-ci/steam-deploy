@@ -12,6 +12,10 @@ Github Action to deploy a game to Steam
 > working unchanged, with one exception: `password` is now always
 > required (previously optional when `totp` was set) - the CLI's steamcmd
 > login always includes it.
+>
+> The action downloads [Valve's official steamcmd](https://developer.valvesoftware.com/wiki/SteamCMD)
+> on each run, updates it to the latest version and runs it natively on the
+> runner, not in a Docker container.
 
 ## Setup
 
