@@ -59,7 +59,9 @@ export function buildCliArgs(inputs: SteamDeployInputs): string[] {
     extraSlot += 1;
   }
 
-  if (inputs.releaseBranch) args.push('--branch', inputs.releaseBranch);
+  // The CLI's --branch defaults to "default", which Steam won't set live, so an
+  // unset releaseBranch passes an empty one to upload without setting it live.
+  args.push('--branch', inputs.releaseBranch ?? '');
   if (inputs.buildDescription) args.push('--description', inputs.buildDescription);
   if (inputs.debugBranch === 'true') args.push('--debugBranch');
   if (inputs.extraExclusions) args.push('--extraExclusions', inputs.extraExclusions);
