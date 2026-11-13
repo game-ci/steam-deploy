@@ -14,7 +14,17 @@ function baseInputs(overrides: Partial<SteamDeployInputs> = {}): SteamDeployInpu
 describe('buildCliArgs', () => {
   it('defaults the primary depot id to appId+1', () => {
     const args = buildCliArgs(baseInputs());
-    expect(args).toEqual(['deploy', 'steam', 'build', '--appId', '1000', '--depotId', '1001']);
+    expect(args).toEqual([
+      'deploy',
+      'steam',
+      'build',
+      '--appId',
+      '1000',
+      '--depotId',
+      '1001',
+      '--branch',
+      '',
+    ]);
   });
 
   it('uses firstDepotIdOverride for the primary depot id when given', () => {
@@ -75,6 +85,12 @@ describe('buildCliArgs', () => {
     expect(args).toContain('--description');
     expect(args[args.indexOf('--description') + 1]).toBe('v1.2.3');
     expect(args).toContain('--debugBranch');
+  });
+
+  it('passes an empty --branch when releaseBranch is unset, so the build is not set live', () => {
+    const args = buildCliArgs(baseInputs());
+    expect(args).toContain('--branch');
+    expect(args[args.indexOf('--branch') + 1]).toBe('');
   });
 
   it('omits --debugBranch when not set to the literal string "true"', () => {

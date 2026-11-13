@@ -51,8 +51,9 @@ function buildCliArgs(inputs) {
             args.push(`--depot${extraSlot}InstallScriptPath`, installScript);
         extraSlot += 1;
     }
-    if (inputs.releaseBranch)
-        args.push('--branch', inputs.releaseBranch);
+    // The CLI's --branch defaults to "default", which Steam won't set live, so an
+    // unset releaseBranch passes an empty one to upload without setting it live.
+    args.push('--branch', inputs.releaseBranch ?? '');
     if (inputs.buildDescription)
         args.push('--description', inputs.buildDescription);
     if (inputs.debugBranch === 'true')
