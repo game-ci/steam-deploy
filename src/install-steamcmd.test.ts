@@ -62,16 +62,38 @@ describe('installSteamCmd', () => {
     expect(steamCmd.root).toBe('/tmp/steamcmd-abc');
     expect(steamCmd.executable.startsWith(path.join('/tmp/steamcmd-abc', 'install'))).toBe(true);
     expect(steamCmd.steamHome.startsWith('/tmp/steamcmd-abc')).toBe(true);
-    expect(exec.exec).toHaveBeenCalledWith(expect.stringMatching(/tar(\.exe)?$/), [
-      '-xf',
-      expect.any(String),
-      '-C',
-      path.join('/tmp/steamcmd-abc', 'install'),
-    ]);
+    expect(exec.exec).toHaveBeenCalledWith(
+      expect.stringMatching(/tar(\.exe)?$/),
+      expect.arrayContaining([
+        '-xf',
+        expect.any(String),
+        '-C',
+        path.join('/tmp/steamcmd-abc', 'install'),
+      ]),
+    );
     expect(exec.exec).toHaveBeenLastCalledWith(steamCmd.executable, ['+quit'], {
       env: expect.objectContaining(steamCmd.env),
       ignoreReturnCode: true,
     });
+  });
+
+  it.each([
+    ['linux', true],
+    ['darwin', true],
+    ['win32', false],
+  ])('extracts without keeping the archive owner on %s: %s', async (platform, noSameOwner) => {
+    const originalPlatform = process.platform;
+    Object.defineProperty(process, 'platform', { value: platform });
+    vi.mocked(exec.exec).mockResolvedValue(0);
+
+    try {
+      await installSteamCmd();
+    } finally {
+      Object.defineProperty(process, 'platform', { value: originalPlatform });
+    }
+
+    const tarArgs = vi.mocked(exec.exec).mock.calls[0][1];
+    expect(tarArgs?.includes('--no-same-owner')).toBe(noSameOwner);
   });
 
   it('removes the per-run directory when the install fails', async () => {

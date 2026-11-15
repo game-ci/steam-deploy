@@ -105,7 +105,14 @@ export async function installSteamCmd(): Promise<SteamCmdInstall> {
       process.platform === 'win32'
         ? path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe')
         : 'tar';
-    await exec.exec(tar, ['-xf', archive, '-C', installDir]);
+    // Valve's archive stores its files as uid 5020 with steamcmd.sh at 0764.
+    // A root job (e.g. in a container) would keep that owner, and steamcmd.sh
+    // would then not count as executable for root.
+    const tarArgs =
+      process.platform === 'win32'
+        ? ['-xf', archive, '-C', installDir]
+        : ['--no-same-owner', '-xf', archive, '-C', installDir];
+    await exec.exec(tar, tarArgs);
     await fs.rm(archive);
 
     // The first run downloads the latest steamcmd and replaces itself. On
