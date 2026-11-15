@@ -42,9 +42,11 @@ async function run() {
     const configVdf = core.getInput('configVdf');
 
     const depotPaths: Record<number, string | undefined> = {};
+    const depotIds: Record<number, string | undefined> = {};
     const depotInstallScriptPaths: Record<number, string | undefined> = {};
     for (let index = 1; index <= MAX_DEPOTS; index++) {
       depotPaths[index] = core.getInput(`depot${index}Path`) || undefined;
+      depotIds[index] = core.getInput(`depot${index}Id`) || undefined;
       depotInstallScriptPaths[index] = core.getInput(`depot${index}InstallScriptPath`) || undefined;
     }
 
@@ -57,6 +59,7 @@ async function run() {
       debugBranch: core.getInput('debugBranch') || undefined,
       extraExclusions: core.getInput('extraExclusions') || undefined,
       depotPaths,
+      depotIds,
       depotInstallScriptPaths,
     };
 

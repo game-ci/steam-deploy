@@ -89,6 +89,29 @@ jobs:
           releaseBranch: prerelease
 ```
 
+For apps whose platform depot IDs are not consecutive, provide each depot's
+Steam ID explicitly. For example:
+
+```yaml
+- uses: game-ci/steam-deploy@v3
+  with:
+    username: ${{ secrets.STEAM_USERNAME }}
+    configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
+    appId: 1136510
+    rootPath: steam-build
+    depot1Path: windows
+    depot1Id: 1136514
+    depot2Path: macos
+    depot2Id: 1136517
+    depot3Path: linux
+    depot3Id: 1136518
+    releaseBranch: beta
+```
+
+`depot1Id`..`depot9Id` correspond to the matching path inputs. If omitted,
+IDs continue to be derived from the first depot ID and the depot slot. Empty
+slots keep their position, so later depot IDs are not shifted down.
+
 ## Configuration
 
 #### username
@@ -194,6 +217,13 @@ Where X is any number between 1 and 9 (inclusive both).
 The relative path following your root path for the files to be included in this depot.
 
 If your appId is 125000 then the depots 125001 ... 125009 will be assumed.
+
+#### depot[X]Id
+
+Use this to set the exact Steam depot ID for the matching `depot[X]Path`.
+Set an ID for each depot when your app uses non-consecutive depot IDs.
+If omitted, the action derives the ID from the first depot ID and the
+depot's numbered slot.
 
 #### firstDepotIdOverride
 

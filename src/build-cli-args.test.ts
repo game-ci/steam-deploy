@@ -65,15 +65,15 @@ describe('buildCliArgs', () => {
     expect(args[args.indexOf('--depot2Path') + 1]).toBe('mac');
   });
 
-  it('skips unset depot slots without leaving gaps in the extra-depot numbering', () => {
+  it('preserves unset depot slots in the extra-depot numbering', () => {
     const args = buildCliArgs(
       baseInputs({
         depotPaths: { 1: 'win', 3: 'mac' },
       }),
     );
-    expect(args).toContain('--depot1Path');
-    expect(args[args.indexOf('--depot1Path') + 1]).toBe('mac');
-    expect(args).not.toContain('--depot2Path');
+    expect(args).not.toContain('--depot1Path');
+    expect(args).toContain('--depot2Path');
+    expect(args[args.indexOf('--depot2Path') + 1]).toBe('mac');
   });
 
   it('maps releaseBranch, buildDescription, and debugBranch', () => {
