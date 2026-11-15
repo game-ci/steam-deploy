@@ -61,6 +61,15 @@ jobs:
       - name: Build
         run: yarn build || { echo 'build command should always succeed'; exit 61; }
 
+      - name: Export built action bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: action-dist
+          path: |
+            dist/index.js
+            dist/index.js.map
+
       - name: Verify dist is up to date
         run: |
           [ -z "$(git status --porcelain dist)" ] || { echo "dist is out of date - run 'yarn build' and commit the result"; git status --porcelain dist; git diff -- dist; exit 1; }
