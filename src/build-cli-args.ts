@@ -34,7 +34,9 @@ export interface SteamDeployInputs {
  */
 export function buildCliArgs(inputs: SteamDeployInputs): string[] {
   const primaryDepotId =
-    inputs.depotIds?.[1] ?? inputs.firstDepotIdOverride ?? String(Number.parseInt(inputs.appId, 10) + 1);
+    inputs.depotIds?.[1] ??
+    inputs.firstDepotIdOverride ??
+    String(Number.parseInt(inputs.appId, 10) + 1);
 
   for (let oldIndex = 1; oldIndex <= MAX_DEPOTS; oldIndex++) {
     if (!inputs.depotPaths[oldIndex] && inputs.depotIds?.[oldIndex]) {

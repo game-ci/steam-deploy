@@ -47,7 +47,9 @@ describe('buildCliArgs', () => {
   });
 
   it('maps depot1InstallScriptPath onto the primary --depotInstallScriptPath', () => {
-    const args = buildCliArgs(baseInputs({ depotInstallScriptPaths: { 1: 'install.vdf' } }));
+    const args = buildCliArgs(
+      baseInputs({ depotPaths: { 1: 'content' }, depotInstallScriptPaths: { 1: 'install.vdf' } }),
+    );
     expect(args).toContain('--depotInstallScriptPath');
   });
 

@@ -26,7 +26,9 @@ const MAX_DEPOTS = 9;
  * not forwarded as the CLI's own --firstDepotIdOverride.
  */
 function buildCliArgs(inputs) {
-    const primaryDepotId = inputs.depotIds?.[1] ?? inputs.firstDepotIdOverride ?? String(Number.parseInt(inputs.appId, 10) + 1);
+    const primaryDepotId = inputs.depotIds?.[1] ??
+        inputs.firstDepotIdOverride ??
+        String(Number.parseInt(inputs.appId, 10) + 1);
     for (let oldIndex = 1; oldIndex <= MAX_DEPOTS; oldIndex++) {
         if (!inputs.depotPaths[oldIndex] && inputs.depotIds?.[oldIndex]) {
             throw new Error(`depot${oldIndex}Id requires depot${oldIndex}Path.`);
