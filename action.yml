@@ -36,54 +36,81 @@ inputs:
   depot1Path:
     required: false
     description: 'The path to depot1.'
+  depot1Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot1. Defaults to firstDepotIdOverride or appId plus one.'
   depot1InstallScriptPath:
     required: false
     description: 'The path to the install script for depot1.'
   depot2Path:
     required: false
     description: 'The path to depot2.'
+  depot2Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot2. Defaults to the depot1 ID plus one.'
   depot2InstallScriptPath:
     required: false
     description: 'The path to the install script for depot2.'
   depot3Path:
     required: false
     description: 'The path to depot3.'
+  depot3Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot3. Defaults to the depot1 ID plus two.'
   depot3InstallScriptPath:
     required: false
     description: 'The path to the install script for depot3.'
   depot4Path:
     required: false
     description: 'The path to depot4.'
+  depot4Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot4. Defaults to the depot1 ID plus three.'
   depot4InstallScriptPath:
     required: false
     description: 'The path to the install script for depot4.'
   depot5Path:
     required: false
     description: 'The path to depot5.'
+  depot5Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot5. Defaults to the depot1 ID plus four.'
   depot5InstallScriptPath:
     required: false
     description: 'The path to the install script for depot5.'
   depot6Path:
     required: false
     description: 'The path to depot6.'
+  depot6Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot6. Defaults to the depot1 ID plus five.'
   depot6InstallScriptPath:
     required: false
     description: 'The path to the install script for depot6.'
   depot7Path:
     required: false
     description: 'The path to depot7.'
+  depot7Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot7. Defaults to the depot1 ID plus six.'
   depot7InstallScriptPath:
     required: false
     description: 'The path to the install script for depot7.'
   depot8Path:
     required: false
     description: 'The path to depot8.'
+  depot8Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot8. Defaults to the depot1 ID plus seven.'
   depot8InstallScriptPath:
     required: false
     description: 'The path to the install script for depot8.'
   depot9Path:
     required: false
     description: 'The path to depot9.'
+  depot9Id:
+    required: false
+    description: 'Explicit Steam depot ID for depot9. Defaults to the depot1 ID plus eight.'
   depot9InstallScriptPath:
     required: false
     description: 'The path to the install script for depot9.'
