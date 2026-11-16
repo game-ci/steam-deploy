@@ -26,6 +26,7 @@ async function run() {
   let steamCmd: SteamCmdInstall | undefined;
   try {
     const cliVersion = core.getInput('cliVersion') || 'latest';
+    const githubToken = core.getInput('githubToken') || '';
 
     const username = core.getInput('username', { required: true });
     // Required unless totp or configVdf is set - the CLI itself validates
@@ -63,7 +64,7 @@ async function run() {
       depotInstallScriptPaths,
     };
 
-    const cliPath = await downloadCli(cliVersion);
+    const cliPath = await downloadCli(cliVersion, githubToken);
     steamCmd = await installSteamCmd();
     const args = [
       ...buildCliArgs(inputs),

@@ -138,6 +138,13 @@ function binaryNameFor(platform) {
     return platform === 'win32' ? 'game-ci.exe' : 'game-ci';
 }
 /**
+ * The `githubToken` input first: Actions doesn't put GITHUB_TOKEN in a JS
+ * action's environment, so the env vars are only a fallback.
+ */
+function resolveToken(githubToken) {
+    return githubToken || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined;
+}
+/**
  * Resolves the "latest" alias to the actual release tag it currently
  * points to, via a small GitHub API call - not the release-asset
  * redirect, which never reveals the concrete tag it landed on. This is
@@ -151,14 +158,14 @@ function binaryNameFor(platform) {
  * know how to resolve "latest" itself, by design, since which tag it's
  * fetched at IS the version it installs.
  */
-async function resolveLatestTag(fetchFn = fetch) {
+async function resolveLatestTag(fetchFn = fetch, githubToken) {
     const headers = { Accept: 'application/vnd.github+json' };
     // Actions runners share IPs across many concurrent jobs from unrelated
     // repos/orgs, so the unauthenticated rate limit (60 req/hour per IP) gets
     // exhausted by traffic this job never generated. The default GITHUB_TOKEN
     // reads public repo data (game-ci/cli's releases) fine regardless of which
     // repo the workflow runs in, and lifts the limit to 5000 req/hour.
-    const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+    const token = resolveToken(githubToken);
     if (token)
         headers.Authorization = `Bearer ${token}`;
     const response = await fetchFn(`https://api.github.com/repos/${CLI_REPO}/releases/latest`, {
@@ -241,9 +248,10 @@ async function saveToCache(version) {
  * so it's a cache miss by construction, never a stale hit.
  *
  * @param version A release tag (e.g. "v0.1.0"), or "latest".
+ * @param githubToken The action's `githubToken` input.
  */
-async function downloadCli(version) {
-    const resolvedVersion = version === 'latest' ? await resolveLatestTag() : version;
+async function downloadCli(version, githubToken) {
+    const resolvedVersion = version === 'latest' ? await resolveLatestTag(fetch, githubToken) : version;
     const cached = await restoreFromCache(resolvedVersion);
     if (cached)
         return cached;
@@ -266,8 +274,11 @@ async function downloadCli(version) {
     }
     const scriptPath = path.join(os.tmpdir(), `game-ci-install-${resolvedVersion.replace(/[^\w.-]/g, '_')}.sh`);
     await fs.writeFile(scriptPath, await scriptResponse.text(), { mode: 0o755 });
+    // install.sh downloads through the authenticated API when it sees a token.
+    const token = resolveToken(githubToken);
     let stdout = '';
     await exec.exec('bash', [scriptPath, resolvedVersion, destDir], {
+        ...(token ? { env: { ...process.env, GITHUB_TOKEN: token } } : {}),
         listeners: {
             stdout: (data) => {
                 stdout += data.toString();
@@ -364,6 +375,7 @@ async function run() {
     let steamCmd;
     try {
         const cliVersion = core.getInput('cliVersion') || 'latest';
+        const githubToken = core.getInput('githubToken') || '';
         const username = core.getInput('username', { required: true });
         // Required unless totp or configVdf is set - the CLI itself validates
         // this combination and throws a clear error if none apply.
@@ -397,7 +409,7 @@ async function run() {
             depotIds,
             depotInstallScriptPaths,
         };
-        const cliPath = await (0, download_cli_1.downloadCli)(cliVersion);
+        const cliPath = await (0, download_cli_1.downloadCli)(cliVersion, githubToken);
         steamCmd = await (0, install_steamcmd_1.installSteamCmd)();
         const args = [
             ...(0, build_cli_args_1.buildCliArgs)(inputs),
