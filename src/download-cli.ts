@@ -13,6 +13,14 @@ export function binaryNameFor(platform: NodeJS.Platform): string {
 }
 
 /**
+ * The `githubToken` input first: Actions doesn't put GITHUB_TOKEN in a JS
+ * action's environment, so the env vars are only a fallback.
+ */
+function resolveToken(githubToken?: string): string | undefined {
+  return githubToken || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined;
+}
+
+/**
  * Resolves the "latest" alias to the actual release tag it currently
  * points to, via a small GitHub API call - not the release-asset
  * redirect, which never reveals the concrete tag it landed on. This is
@@ -26,14 +34,17 @@ export function binaryNameFor(platform: NodeJS.Platform): string {
  * know how to resolve "latest" itself, by design, since which tag it's
  * fetched at IS the version it installs.
  */
-export async function resolveLatestTag(fetchFn: typeof fetch = fetch): Promise<string> {
+export async function resolveLatestTag(
+  fetchFn: typeof fetch = fetch,
+  githubToken?: string,
+): Promise<string> {
   const headers: Record<string, string> = { Accept: 'application/vnd.github+json' };
   // Actions runners share IPs across many concurrent jobs from unrelated
   // repos/orgs, so the unauthenticated rate limit (60 req/hour per IP) gets
   // exhausted by traffic this job never generated. The default GITHUB_TOKEN
   // reads public repo data (game-ci/cli's releases) fine regardless of which
   // repo the workflow runs in, and lifts the limit to 5000 req/hour.
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  const token = resolveToken(githubToken);
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const response = await fetchFn(`https://api.github.com/repos/${CLI_REPO}/releases/latest`, {
@@ -124,9 +135,11 @@ async function saveToCache(version: string): Promise<void> {
  * so it's a cache miss by construction, never a stale hit.
  *
  * @param version A release tag (e.g. "v0.1.0"), or "latest".
+ * @param githubToken The action's `githubToken` input.
  */
-export async function downloadCli(version: string): Promise<string> {
-  const resolvedVersion = version === 'latest' ? await resolveLatestTag() : version;
+export async function downloadCli(version: string, githubToken?: string): Promise<string> {
+  const resolvedVersion =
+    version === 'latest' ? await resolveLatestTag(fetch, githubToken) : version;
 
   const cached = await restoreFromCache(resolvedVersion);
   if (cached) return cached;
@@ -158,8 +171,12 @@ export async function downloadCli(version: string): Promise<string> {
   );
   await fs.writeFile(scriptPath, await scriptResponse.text(), { mode: 0o755 });
 
+  // install.sh downloads through the authenticated API when it sees a token.
+  const token = resolveToken(githubToken);
+
   let stdout = '';
   await exec.exec('bash', [scriptPath, resolvedVersion, destDir], {
+    ...(token ? { env: { ...process.env, GITHUB_TOKEN: token } } : {}),
     listeners: {
       stdout: (data: Buffer) => {
         stdout += data.toString();
