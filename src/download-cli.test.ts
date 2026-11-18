@@ -100,6 +100,34 @@ describe('resolveLatestTag', () => {
     }
   });
 
+  it('prefers the explicit githubToken parameter over GITHUB_TOKEN/GH_TOKEN when both are present', async () => {
+    const originalGithub = process.env.GITHUB_TOKEN;
+    const originalGh = process.env.GH_TOKEN;
+    process.env.GITHUB_TOKEN = 'env-github-token';
+    process.env.GH_TOKEN = 'env-gh-token';
+
+    const fetchFn = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ tag_name: 'v0.1.15' }),
+    })) as unknown as typeof fetch;
+
+    try {
+      await resolveLatestTag(fetchFn, 'explicit-input-token');
+      expect(fetchFn).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({ Authorization: 'Bearer explicit-input-token' }),
+        }),
+      );
+    } finally {
+      if (originalGithub === undefined) delete process.env.GITHUB_TOKEN;
+      else process.env.GITHUB_TOKEN = originalGithub;
+      if (originalGh === undefined) delete process.env.GH_TOKEN;
+      else process.env.GH_TOKEN = originalGh;
+    }
+  });
+
   it('throws with a clear message on a non-ok response', async () => {
     const fetchFn = vi.fn(async () => ({
       ok: false,
@@ -193,6 +221,47 @@ describe('downloadCli', () => {
       'bash',
       expect.arrayContaining(['v0.1.33']),
       expect.anything(),
+    );
+  });
+
+  it('forwards its githubToken parameter to resolveLatestTag when resolving "latest"', async () => {
+    globalThis.fetch = vi.fn(async (url: string) => {
+      if (url.includes('/releases/latest')) {
+        return { ok: true, status: 200, json: async () => ({ tag_name: 'v0.1.33' }) };
+      }
+      return { ok: true, status: 200, text: async () => 'echo mock install.sh' };
+    }) as unknown as typeof fetch;
+
+    vi.mocked(exec.exec).mockImplementation(async (_cmd, _args, options) => {
+      options?.listeners?.stdout?.(Buffer.from('/tmp/game-ci\n'));
+      return 0;
+    });
+
+    await downloadCli('latest', 'gha-token-from-input');
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://api.github.com/repos/game-ci/cli/releases/latest',
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: 'Bearer gha-token-from-input' }),
+      }),
+    );
+  });
+
+  it('passes the githubToken to install.sh as GITHUB_TOKEN', async () => {
+    mockInstallScriptFetch();
+    vi.mocked(exec.exec).mockImplementation(async (_cmd, _args, options) => {
+      options?.listeners?.stdout?.(Buffer.from('/tmp/game-ci\n'));
+      return 0;
+    });
+
+    await downloadCli('v0.1.32', 'gha-token-from-input');
+
+    expect(exec.exec).toHaveBeenCalledWith(
+      'bash',
+      expect.arrayContaining(['v0.1.32']),
+      expect.objectContaining({
+        env: expect.objectContaining({ GITHUB_TOKEN: 'gha-token-from-input' }),
+      }),
     );
   });
 
